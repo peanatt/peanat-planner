@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐭 PLANNER - PEANAT.NN</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0D1B3E;--teal:#4DC9C2;--teal2:#2BA8A0;--red:#D63031;
+  --text:#FFFFFF;--text2:#C8D8F0;--text3:#8AA8CC;
+  --card-r:20px;--font:'Baloo 2',sans-serif;
+}
+body{font-family:var(--font);background:linear-gradient(160deg,#050E24 0%,#0D1B3E 40%,#0A2244 70%,#0D1030 100%);min-height:100vh;color:var(--text);position:relative;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;
+  background-image:radial-gradient(circle,#FFFFFF99 1px,transparent 1px),radial-gradient(circle,#4DC9C260 1px,transparent 1px),radial-gradient(circle,#FFE87A50 1px,transparent 1px);
+  background-size:80px 80px,120px 120px,100px 100px;background-position:0 0,40px 40px,20px 60px;opacity:0.5;z-index:0;}
+
+.wrap{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:16px;}
+
+/* ===== HEADER ===== */
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;
+  background:rgba(13,27,62,0.95);backdrop-filter:blur(12px);border-radius:var(--card-r);
+  border:2px solid rgba(77,201,194,0.4);margin-bottom:16px;gap:12px;}
+.logo{display:flex;align-items:center;gap:10px;}
+/* Mickey logo in header - small inline SVG */
+.logo-mickey-wrap{position:relative;width:44px;height:44px;flex-shrink:0;}
+.logo-mickey-wrap svg{filter:drop-shadow(0 0 6px rgba(77,201,194,0.6));}
+.logo-wrap{display:flex;flex-direction:column;line-height:1.1;}
+.logo-text{font-size:19px;font-weight:800;color:#4DC9C2;letter-spacing:.5px;animation:pulse-logo 3s ease-in-out infinite;}
+.logo-sub{font-size:11px;font-weight:600;color:#8AA8CC;letter-spacing:1px;margin-top:-2px;}
+.header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.btn{font-family:var(--font);font-size:13px;font-weight:700;border:none;border-radius:10px;padding:8px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.btn-gcal{background:linear-gradient(135deg,#1E3A6E,#2A4A8E);color:#4DC9C2;border:2px solid rgba(77,201,194,0.5);}
+.btn-gcal:hover{opacity:.85;transform:translateY(-1px);}
+.btn-add{background:linear-gradient(135deg,#D63031,#A01010);color:#FFF;border:2px solid rgba(255,80,80,0.5);}
+.btn-add:hover{opacity:.85;transform:translateY(-1px);}
+.btn-notify{background:linear-gradient(135deg,#1A4030,#1A3850);color:#80FFD0;border:2px solid rgba(128,255,208,0.3);position:relative;}
+.notif-badge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:#FF4444;border-radius:50%;font-size:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.gs-status{background:rgba(20,60,30,0.7);border:1.5px solid rgba(77,201,194,0.4);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:700;color:#80FFD0;display:flex;align-items:center;gap:6px;}
+.gs-dot{width:7px;height:7px;border-radius:50%;background:#4DC9C2;animation:twinkle 1.5s ease-in-out infinite;}
+
+/* ===== TODAY HOLIDAY BANNER ===== */
+.holiday-banner{
+  background:linear-gradient(135deg,rgba(255,200,80,0.12),rgba(255,150,50,0.08));
+  border:1.5px solid rgba(255,200,80,0.35);border-radius:14px;
+  padding:10px 18px;margin-bottom:12px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  animation:sparkle-in .4s ease forwards;
+}
+.holiday-banner-emoji{font-size:22px;flex-shrink:0;}
+.holiday-banner-text{font-size:13px;font-weight:700;color:#FFE87A;flex:1;}
+.holiday-banner-sub{font-size:11px;color:#8AA8CC;font-weight:600;}
+.notif-panel{background:rgba(10,22,50,0.97);border:2px solid rgba(77,201,194,0.35);border-radius:var(--card-r);padding:16px;margin-bottom:12px;display:none;max-height:420px;overflow-y:auto;}
+.notif-panel.open{display:block;}
+.notif-tabs{display:flex;gap:4px;margin-bottom:12px;}
+.ntab{font-family:var(--font);font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;border:1.5px solid transparent;cursor:pointer;background:none;color:#8AA8CC;transition:.15s;}
+.ntab.active{background:rgba(77,201,194,0.2);color:#4DC9C2;border-color:rgba(77,201,194,0.4);}
+.notif-item{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;border-radius:10px;margin-bottom:5px;cursor:pointer;border:1px solid transparent;transition:.15s;}
+.notif-item:hover{background:rgba(77,201,194,0.06);}
+.notif-item.urgent{background:rgba(255,80,80,0.10);border-color:rgba(255,80,80,0.2);}
+.notif-item.soon{background:rgba(255,200,80,0.08);border-color:rgba(255,200,80,0.2);}
+.notif-item.info{background:rgba(77,201,194,0.08);border-color:rgba(77,201,194,0.15);}
+.notif-item.activity{background:rgba(20,40,80,0.4);border-color:rgba(77,201,194,0.1);}
+.notif-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.dot-urgent{background:#FF8080;}.dot-soon{background:#FFB840;}.dot-info{background:#4DC9C2;}
+.dot-add{background:#80FFD0;}.dot-edit{background:#FFE87A;}.dot-done{background:#4DC9C2;}.dot-delete{background:#FF8080;}
+.notif-text{font-size:13px;color:var(--text);line-height:1.4;font-weight:600;}
+.notif-time{font-size:11px;color:var(--text3);margin-top:2px;}
+.notif-clear{font-family:var(--font);font-size:11px;font-weight:700;color:#8AA8CC;background:none;border:1px solid rgba(110,198,255,0.2);border-radius:6px;padding:3px 8px;cursor:pointer;float:right;margin-top:-2px;}
+.notif-clear:hover{color:#FF8080;border-color:rgba(255,80,80,0.3);}
+
+/* ===== LAYOUT: sidebar fixed width + calendar fills rest ===== */
+.main-layout{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:start;}
+@media(max-width:600px){
+  .header-actions{gap:5px;}
+  .btn{font-size:12px;padding:7px 10px;}
+  .gs-status{font-size:11px;padding:5px 8px;}
+  .notif-badge{top:-5px;right:-5px;width:18px;height:18px;font-size:10px;}
+  .cal-title{font-size:18px;}
+  .day-cell{min-height:70px;padding:4px;}
+  .event-chip{font-size:10px;padding:2px 5px;}
+  .main-layout{gap:10px;}
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{display:flex;flex-direction:column;gap:12px;}
+
+/* Summary card */
+.summary-card{background:rgba(13,27,62,0.92);backdrop-filter:blur(8px);border-radius:var(--card-r);padding:16px;border:2px solid rgba(77,201,194,0.3);}
+.summary-tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap;}
+.stab{font-family:var(--font);font-size:12px;font-weight:700;padding:5px 10px;border-radius:8px;border:1.5px solid transparent;cursor:pointer;background:none;color:#8AA8CC;transition:.15s;}
+.stab.active{background:rgba(77,201,194,0.2);color:#4DC9C2;border-color:rgba(77,201,194,0.5);}
+.summary-stat{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(77,201,194,0.2);font-size:13px;color:#C8D8F0;font-weight:600;}
+.summary-stat:last-child{border:none;}
+.stat-num{font-weight:800;font-size:16px;color:#4DC9C2;}
+.summary-list{margin-top:8px;}
+.sum-event{display:flex;gap:8px;align-items:flex-start;padding:6px 8px;border-radius:10px;margin-bottom:4px;cursor:pointer;transition:.15s;}
+.sum-event:hover{background:rgba(77,201,194,0.12);}
+.sum-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.sum-info{font-size:13px;color:#FFF;line-height:1.4;font-weight:600;}
+.sum-time{font-size:11px;color:#8AA8CC;}
+.sum-done{text-decoration:line-through;opacity:.5;}
+
+/* ===== HABIT TRACKER ===== */
+.habit-card{background:rgba(13,27,62,0.92);backdrop-filter:blur(8px);border-radius:var(--card-r);padding:16px;border:2px solid rgba(77,201,194,0.3);}
+.habit-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.habit-title{font-size:15px;font-weight:800;color:#4DC9C2;}
+.habit-add-btn{background:rgba(77,201,194,0.15);border:1.5px solid rgba(77,201,194,0.4);border-radius:8px;padding:5px 12px;color:#4DC9C2;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:.15s;}
+.habit-add-btn:hover{background:rgba(77,201,194,0.3);}
+.habit-month-label{font-size:11px;font-weight:700;color:#8AA8CC;margin-bottom:6px;text-align:center;}
+.habit-week-row{display:grid;grid-template-columns:100px repeat(7,minmax(0,1fr));gap:3px;margin-bottom:4px;}
+.habit-week-label{font-size:10px;font-weight:800;color:#4DC9C2;text-align:center;padding:2px 0;min-width:0;overflow:hidden;}
+.habit-row{display:grid;grid-template-columns:100px repeat(7,minmax(0,1fr));gap:3px;align-items:center;margin-bottom:6px;}
+.habit-dot{width:100%;aspect-ratio:1;border-radius:6px;border:1.5px solid rgba(77,201,194,0.2);background:rgba(13,27,62,0.5);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;position:relative;}
+/* name cell */
+.habit-name-cell{display:flex;align-items:center;gap:5px;padding-right:4px;position:relative;}
+.habit-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;background:rgba(77,201,194,0.12);border:1px solid rgba(77,201,194,0.2);}
+.habit-name{font-size:11px;font-weight:700;color:#C8D8F0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;cursor:pointer;}
+.habit-name:hover{color:#4DC9C2;}
+/* action buttons shown on hover */
+.habit-name-cell:hover .habit-actions{opacity:1;}
+.habit-actions{opacity:0;transition:.15s;display:flex;gap:2px;position:absolute;right:-2px;top:50%;transform:translateY(-50%);background:rgba(13,27,62,0.95);border-radius:6px;padding:2px 3px;border:1px solid rgba(77,201,194,0.2);}
+.habit-act-btn{background:none;border:none;cursor:pointer;font-size:11px;padding:1px 3px;border-radius:4px;line-height:1;font-family:var(--font);}
+.habit-edit-btn{color:#4DC9C2;}.habit-edit-btn:hover{background:rgba(77,201,194,0.2);}
+.habit-del-btn{color:#FF8080;}.habit-del-btn:hover{background:rgba(255,80,80,0.15);}
+.habit-dot:hover{border-color:rgba(77,201,194,0.5);background:rgba(77,201,194,0.08);}
+.habit-dot.done{background:linear-gradient(135deg,#4DC9C2,#2BA8A0);border-color:#4DC9C2;box-shadow:0 0 6px rgba(77,201,194,0.4);}
+.habit-dot.done::after{content:'';display:block;width:6px;height:10px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg);margin-top:-2px;}
+.habit-dot.today-col{border-color:rgba(214,48,49,0.55);}
+.habit-dot.done.today-col{background:linear-gradient(135deg,#D63031,#A01010);box-shadow:0 0 6px rgba(214,48,49,0.4);}
+/* streak bar */
+.habit-streak-row{grid-column:2/-1;display:flex;align-items:center;gap:4px;padding-bottom:2px;}
+.habit-streak-bar{height:2px;border-radius:2px;background:linear-gradient(90deg,#FFE87A,#FFA040);flex:1;}
+.habit-streak-txt{font-size:9px;color:#FFE87A;font-weight:800;white-space:nowrap;}
+.habit-empty{text-align:center;font-size:12px;color:#8AA8CC;padding:20px 0;}
+/* modal for add/edit habit */
+.habit-modal-overlay{position:fixed;inset:0;background:rgba(5,14,36,0.8);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;}
+.habit-modal{background:rgba(13,27,62,0.99);border:2px solid rgba(77,201,194,0.4);border-radius:20px;padding:24px;width:min(340px,90vw);box-shadow:0 20px 60px rgba(0,10,40,0.7);}
+.habit-modal-title{font-size:16px;font-weight:800;color:#4DC9C2;margin-bottom:16px;}
+.habit-modal input{width:100%;font-family:var(--font);font-size:14px;font-weight:600;padding:9px 12px;border:2px solid rgba(77,201,194,0.3);border-radius:10px;color:#fff;background:rgba(20,40,80,0.6);outline:none;margin-bottom:10px;}
+.habit-modal input:focus{border-color:rgba(77,201,194,0.7);}
+.habit-icon-picker{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.icon-opt{width:36px;height:36px;border-radius:8px;border:2px solid rgba(77,201,194,0.2);background:rgba(13,27,62,0.6);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:.15s;}
+.icon-opt:hover,.icon-opt.sel{border-color:#4DC9C2;background:rgba(77,201,194,0.15);}
+.habit-modal-row{display:flex;gap:8px;justify-content:flex-end;}
+.habit-modal-cancel{font-family:var(--font);font-size:13px;font-weight:700;padding:8px 16px;border-radius:10px;border:2px solid rgba(77,201,194,0.2);background:rgba(20,40,80,0.5);color:#8AA8CC;cursor:pointer;}
+.habit-modal-save{font-family:var(--font);font-size:13px;font-weight:800;padding:8px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#4DC9C2,#2BA8A0);color:#0D1B3E;cursor:pointer;}
+
+/* ===== MAIN CALENDAR — fills remaining space ===== */
+.cal-area{background:rgba(13,27,62,0.92);backdrop-filter:blur(8px);border-radius:var(--card-r);padding:20px;border:2px solid rgba(77,201,194,0.3);min-height:600px;}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+.cal-title{font-size:22px;font-weight:800;color:#4DC9C2;}
+.view-tabs{display:flex;gap:4px;}
+.vtab{font-family:var(--font);font-size:13px;font-weight:700;padding:7px 14px;border-radius:10px;border:2px solid rgba(77,201,194,0.3);cursor:pointer;background:none;color:#8AA8CC;transition:.15s;}
+.vtab.active{background:linear-gradient(135deg,#1A4A5A,#0D3040);color:#4DC9C2;border-color:rgba(77,201,194,0.6);}
+.cal-nav{display:flex;gap:6px;align-items:center;}
+.nav-btn{font-family:var(--font);font-size:16px;font-weight:700;background:rgba(20,40,80,0.6);border:2px solid rgba(77,201,194,0.3);border-radius:10px;padding:6px 14px;cursor:pointer;color:#4DC9C2;transition:.15s;}
+.nav-btn:hover{background:rgba(77,201,194,0.15);}
+.nav-today{font-size:13px;font-weight:700;}
+
+/* Month grid */
+.month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;border:2.5px solid rgba(77,201,194,0.6);border-radius:16px;overflow:hidden;}
+.day-label{text-align:center;font-size:13px;font-weight:800;color:#4DC9C2;padding:10px 0;background:rgba(20,50,100,0.85);border-right:2px solid rgba(77,201,194,0.4);border-bottom:2.5px solid rgba(77,201,194,0.6);width:100%;min-width:0;overflow:hidden;}
+.day-label:last-child{border-right:none;}
+.day-cell{min-height:100px;padding:6px;cursor:pointer;transition:.15s;border-right:1.5px solid rgba(77,201,194,0.3);border-bottom:1.5px solid rgba(77,201,194,0.3);background:rgba(13,27,62,0.6);width:100%;min-width:0;overflow:hidden;}
+.day-cell:nth-child(7n){border-right:none;}
+.day-cell:hover{background:rgba(77,201,194,0.1);}
+.day-cell.other{opacity:.3;background:rgba(5,14,36,0.4);}
+.day-cell.today{background:linear-gradient(135deg,rgba(214,48,49,0.15),rgba(160,16,16,0.1));border-color:rgba(214,48,49,0.4)!important;}
+.day-num{font-size:14px;font-weight:800;color:#FFF;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:50%;}
+.day-cell.today .day-num{background:linear-gradient(135deg,#D63031,#A01010);color:#FFF;}
+.day-cell.selected{background:rgba(77,201,194,0.12);}
+.event-chip{font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;margin-top:2px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;}
+.event-chip:hover{opacity:.8;}
+.chip-meeting{background:rgba(160,144,232,0.3);color:#DDD6FF;border:1px solid rgba(160,144,232,0.5);}
+.chip-personal{background:rgba(255,160,200,0.25);color:#FFB8D8;border:1px solid rgba(255,160,200,0.5);}
+.chip-work{background:rgba(77,201,194,0.2);color:#80FFD0;border:1px solid rgba(77,201,194,0.4);}
+.chip-done{opacity:.4;text-decoration:line-through;}
+.chip-health{background:rgba(255,200,80,0.2);color:#FFE87A;border:1px solid rgba(255,200,80,0.4);}
+.chip-travel{background:rgba(110,198,255,0.2);color:#6EC6FF;border:1px solid rgba(110,198,255,0.4);}
+.chip-gcal{background:rgba(77,201,194,0.12);color:#80FFD0;border:1px dashed rgba(77,201,194,0.4);}
+.chip-holiday{background:rgba(255,200,80,0.18);color:#FFE87A;border:1px solid rgba(255,200,80,0.45);}
+.more-chip{font-size:10px;color:#4DC9C2;padding:1px 4px;cursor:pointer;font-weight:700;}
+
+/* Week view */
+.week-grid{display:grid;grid-template-columns:48px repeat(7,1fr);gap:0;}
+.week-day-head{text-align:center;padding:4px;border-radius:8px;margin:2px;}
+.week-day-name{font-size:11px;font-weight:700;color:#8AA8CC;}
+.week-day-num{font-size:18px;font-weight:800;color:#C8D8F0;}
+.week-day-num.today{background:linear-gradient(135deg,#D63031,#A01010);color:#FFF;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;margin:0 auto;}
+.hour-cell{height:48px;border-top:1.5px solid rgba(77,201,194,0.2);border-left:1.5px solid rgba(77,201,194,0.15);position:relative;background:rgba(13,27,62,0.5);}
+.hour-label{height:48px;border-top:1.5px solid rgba(77,201,194,0.2);display:flex;align-items:flex-start;justify-content:flex-end;padding-right:6px;padding-top:2px;font-size:11px;color:var(--text3);}
+
+/* Day view */
+.day-header-big{text-align:center;padding:12px;margin-bottom:12px;}
+.day-big-num{font-size:52px;font-weight:800;color:#4DC9C2;}
+.day-big-name{font-size:15px;color:#8AA8CC;font-weight:600;}
+
+/* Modal */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(5,14,36,0.75);backdrop-filter:blur(6px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.modal{background:rgba(13,27,62,0.99);border:2px solid rgba(77,201,194,0.4);border-radius:24px;padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,10,40,0.7);position:relative;z-index:9001;}
+
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.modal-title{font-size:19px;font-weight:800;color:#4DC9C2;}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:#8AA8CC;padding:4px 8px;border-radius:8px;}
+.modal-close:hover{background:rgba(77,201,194,0.15);}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:13px;font-weight:700;color:#C8D8F0;margin-bottom:5px;display:block;}
+.form-input{width:100%;font-family:var(--font);font-size:14px;font-weight:600;padding:9px 12px;border:2px solid rgba(77,201,194,0.3);border-radius:10px;color:#FFF;background:rgba(20,40,80,0.6);outline:none;transition:.15s;}
+.form-input:focus{border-color:rgba(77,201,194,0.7);background:rgba(25,50,100,0.8);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-actions{display:flex;gap:8px;margin-top:20px;justify-content:flex-end;}
+.btn-save{background:linear-gradient(135deg,#1A4A5A,#0D3040);color:#4DC9C2;border:2px solid rgba(77,201,194,0.6);border-radius:10px;font-family:var(--font);font-weight:800;font-size:14px;padding:10px 20px;cursor:pointer;}
+.btn-cancel{background:rgba(20,40,80,0.5);color:#8AA8CC;border:2px solid rgba(77,201,194,0.2);border-radius:10px;font-family:var(--font);font-weight:700;font-size:14px;padding:10px 20px;cursor:pointer;}
+.btn-done-mark{background:linear-gradient(135deg,#0A3020,#0A2840);color:#80FFD0;border:2px solid rgba(128,255,208,0.3);border-radius:10px;font-family:var(--font);font-weight:800;font-size:14px;padding:10px 16px;cursor:pointer;}
+.btn-delete{background:rgba(255,80,80,0.15);color:#FF8080;border:2px solid rgba(255,80,80,0.35);border-radius:10px;font-family:var(--font);font-weight:700;font-size:14px;padding:10px 16px;cursor:pointer;}
+.map-link{display:flex;align-items:center;gap:6px;font-size:12px;color:#4DC9C2;text-decoration:none;padding:4px 8px;background:rgba(77,201,194,0.1);border-radius:8px;margin-top:4px;width:fit-content;font-weight:700;}
+.gcal-hint{background:rgba(20,50,100,0.5);border-radius:12px;padding:12px;font-size:13px;color:#C8D8F0;margin-bottom:10px;border:1.5px solid rgba(77,201,194,0.25);font-weight:600;}
+.gcal-hint a{color:#4DC9C2;font-weight:700;}
+.ved-label{font-size:12px;font-weight:700;color:#8AA8CC;margin-bottom:2px;}
+.ved-val{font-size:14px;color:#FFF;font-weight:600;}
+.view-event-detail{margin-bottom:10px;}
+
+/* Planets */
+.planet{position:fixed;pointer-events:none;z-index:0;border-radius:50%;}
+.p1{width:140px;height:140px;background:radial-gradient(circle,#1A4A5A,#0D2030);border:2px solid rgba(77,201,194,0.2);opacity:.35;top:5%;right:5%;}
+.p2{width:90px;height:90px;background:radial-gradient(circle,#1A2A40,#0A1828);border:2px solid rgba(77,201,194,0.15);opacity:.3;bottom:15%;left:3%;}
+.p3{width:60px;height:60px;background:radial-gradient(circle,#D63031,#7A0A0A);border:2px solid rgba(255,80,80,0.25);opacity:.25;top:40%;right:2%;}
+
+/* ===== SYNC LOADING INDICATOR ===== */
+.sync-bar{
+  position:fixed;top:0;left:0;width:100%;height:3px;z-index:99999;
+  background:linear-gradient(90deg,#4DC9C2,#80FFD0,#4DC9C2);
+  background-size:200% 100%;
+  animation:sync-slide 1.2s linear infinite;
+  display:none;
+}
+.sync-bar.active{display:block;}
+.sync-toast{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  background:rgba(13,27,62,0.97);border:1.5px solid rgba(77,201,194,0.5);
+  border-radius:12px;padding:8px 18px;font-size:13px;font-weight:700;
+  color:#4DC9C2;z-index:99998;display:none;align-items:center;gap:8px;
+  box-shadow:0 4px 20px rgba(0,10,40,0.5);white-space:nowrap;
+}
+.sync-toast.show{display:flex;}
+.sync-spinner{width:14px;height:14px;border:2px solid rgba(77,201,194,0.3);border-top-color:#4DC9C2;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes sync-slide{0%{background-position:200% 0;}100%{background-position:0% 0;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Toast */
+.toast{position:fixed;bottom:180px;right:24px;background:rgba(13,27,62,0.98);border-radius:14px;padding:12px 18px;box-shadow:0 8px 32px rgba(0,10,40,0.6);font-size:14px;font-weight:700;color:#FFF;z-index:9999;transform:translateY(80px);opacity:0;transition:.3s;display:flex;align-items:center;gap:8px;max-width:300px;border:2px solid rgba(77,201,194,0.4);}
+.toast.show{transform:translateY(0);opacity:1;}
+.empty-day{text-align:center;padding:20px;color:var(--text3);font-size:13px;font-weight:600;}
+.float-star{position:fixed;pointer-events:none;z-index:0;font-size:16px;animation:floatStar linear infinite;}
+
+/* ===== MICKEY MASCOT — locked bottom right ===== */
+#mickey-wrap{
+  position:fixed;z-index:5;
+  right:24px;bottom:24px;
+  pointer-events:none;
+  cursor:default;
+  user-select:none;
+}
+.mickey-svg{filter:drop-shadow(0 4px 20px rgba(77,201,194,0.7)) drop-shadow(0 0 10px rgba(255,255,255,0.2));}
+.mickey-speech{
+  position:absolute;top:-70px;right:0px;
+  background:#FFFFFF;border-radius:16px 16px 4px 16px;
+  padding:8px 14px;font-size:12px;font-weight:800;color:#0D1B3E;
+  white-space:nowrap;border:2px solid #0D1B3E;
+  pointer-events:none;animation:speech-pop 2.5s ease-in-out infinite;
+}
+.mickey-speech::after{content:'';position:absolute;bottom:-10px;right:14px;border:5px solid transparent;border-top-color:#0D1B3E;}
+.mickey-speech::before{content:'';position:absolute;bottom:-8px;right:14px;border:5px solid transparent;border-top-color:#FFF;z-index:1;}
+.mickey-star{position:absolute;top:-14px;left:-10px;font-size:16px;animation:star-spin 2.5s ease-in-out infinite;}
+
+/* ===== ANIMATIONS ===== */
+@keyframes floatStar{0%{transform:translateY(0) rotate(0deg);opacity:.7;}50%{transform:translateY(-18px) rotate(20deg);opacity:1;}100%{transform:translateY(0) rotate(0deg);opacity:.7;}}
+@keyframes twinkle{0%,100%{opacity:.3;transform:scale(.8);}50%{opacity:1;transform:scale(1.2);}}
+@keyframes pulse-logo{0%,100%{text-shadow:0 0 0px #4DC9C2;}50%{text-shadow:0 0 12px #4DC9C2,0 0 24px #80FFE0;}}
+@keyframes speech-pop{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+@keyframes star-spin{0%{transform:rotate(0deg) scale(1);}50%{transform:rotate(180deg) scale(1.3);}100%{transform:rotate(360deg) scale(1);}}
+@keyframes mickey-idle{0%,100%{transform:translateY(0px);}50%{transform:translateY(-10px);}}
+@keyframes badge-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.25);box-shadow:0 0 8px rgba(255,68,68,0.8);}}
+@keyframes sparkle-in{0%{transform:scale(.5) translateY(20px);opacity:0;}60%{transform:scale(1.08) translateY(-4px);opacity:1;}100%{transform:scale(1) translateY(0);opacity:1;}}
+.toast.show{animation:sparkle-in .35s ease forwards;}
+</style>
+</head>
+<body>
+<!-- Sync indicators -->
+<div class="sync-bar" id="sync-bar"></div>
+<div class="sync-toast" id="sync-toast"><div class="sync-spinner"></div><span id="sync-toast-msg">กำลังโหลดปฏิทิน...</span></div>
+
+<div class="planet p1"></div><div class="planet p2"></div><div class="planet p3"></div>
+<div id="float-stars"></div>
+
+<!-- ===== MICKEY MASCOT locked bottom-right ===== -->
+<div id="mickey-wrap">
+  <div class="mickey-speech" id="mickey-msg">อย่าลืมนัดนะ! 🌟</div>
+  <div class="mickey-star">⭐</div>
+  <svg id="mickey-main" class="mickey-svg" width="120" height="140" viewBox="0 0 110 130" xmlns="http://www.w3.org/2000/svg"
+       style="animation:mickey-idle 3s ease-in-out infinite;">
+    <!-- big round ears -->
+    <circle cx="24" cy="20" r="19" fill="#111"/>
+    <circle cx="86" cy="20" r="19" fill="#111"/>
+    <!-- helmet sphere -->
+    <circle cx="55" cy="52" r="31" fill="#D8EAF8" stroke="#A8C0D8" stroke-width="2"/>
+    <circle cx="55" cy="52" r="31" fill="none" stroke="#4DC9C2" stroke-width="2.5" opacity=".75"/>
+    <!-- visor dark -->
+    <ellipse cx="55" cy="52" rx="20" ry="19" fill="#0D2A4A" opacity=".92"/>
+    <!-- visor shine -->
+    <ellipse cx="47" cy="43" rx="5.5" ry="4" fill="#4DC9C2" opacity=".55"/>
+    <ellipse cx="60" cy="40" rx="2" ry="1.5" fill="#FFF" opacity=".45"/>
+    <!-- visor reflection line -->
+    <line x1="39" y1="47" x2="71" y2="47" stroke="#4DC9C2" stroke-width=".8" opacity=".3"/>
+    <!-- side ear covers -->
+    <circle cx="24" cy="48" r="9" fill="#C8D8EE" stroke="#A0B8D8" stroke-width="1"/>
+    <circle cx="86" cy="48" r="9" fill="#C8D8EE" stroke="#A0B8D8" stroke-width="1"/>
+    <!-- body suit -->
+    <ellipse cx="55" cy="96" rx="30" ry="31" fill="#E8EEF8" stroke="#B0C4DC" stroke-width="1.5"/>
+    <!-- teal collar -->
+    <ellipse cx="55" cy="79" rx="21" ry="6.5" fill="#4DC9C2" opacity=".85"/>
+    <!-- chest panel -->
+    <rect x="43" y="87" width="24" height="17" rx="4" fill="#4DC9C2" opacity=".8"/>
+    <rect x="46" y="90" width="7" height="5" rx="1.5" fill="#FFE87A"/>
+    <rect x="55" y="90" width="7" height="5" rx="1.5" fill="#FF8080"/>
+    <!-- LEFT ARM waving -->
+    <ellipse cx="19" cy="91" rx="9" ry="22" fill="#D8E4F4" stroke="#B0C4DC" stroke-width="1.5" transform="rotate(-25 19 91)">
+      <animateTransform attributeName="transform" type="rotate"
+        values="-25 19 91; -5 19 91; -25 19 91" dur="1s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- left glove moves with arm -->
+    <circle cx="8" cy="108" r="8.5" fill="#FFF" stroke="#B0C4DC" stroke-width="1.5">
+      <animateTransform attributeName="transform" type="translate"
+        values="0,0; 7,-8; 0,0" dur="1s" repeatCount="indefinite"/>
+    </circle>
+    <!-- RIGHT ARM -->
+    <ellipse cx="91" cy="91" rx="9" ry="22" fill="#D8E4F4" stroke="#B0C4DC" stroke-width="1.5" transform="rotate(15 91 91)"/>
+    <circle cx="102" cy="107" r="8.5" fill="#FFF" stroke="#B0C4DC" stroke-width="1.5"/>
+    <!-- legs -->
+    <ellipse cx="41" cy="124" rx="10" ry="8" fill="#C8D8EE" stroke="#A0B8D8" stroke-width="1.5"/>
+    <ellipse cx="69" cy="124" rx="10" ry="8" fill="#C8D8EE" stroke="#A0B8D8" stroke-width="1.5"/>
+    <!-- boots -->
+    <ellipse cx="39" cy="130" rx="13" ry="5" fill="#111"/>
+    <ellipse cx="71" cy="130" rx="13" ry="5" fill="#111"/>
+    <!-- air tube -->
+    <path d="M87 87 Q98 77 92 65" stroke="#4DC9C2" stroke-width="3" fill="none" stroke-dasharray="4,3" opacity=".75"/>
+    <!-- floating stars -->
+    <text x="96" y="68" font-size="10" fill="#FFE87A" opacity=".9">✦</text>
+    <text x="4" y="76" font-size="8" fill="#4DC9C2" opacity=".8">✦</text>
+  </svg>
+</div>
+
+<div class="wrap">
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="logo">
+    <!-- Small Mickey in logo -->
+    <div class="logo-mickey-wrap">
+      <svg width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" style="animation:mickey-idle 3s ease-in-out infinite;">
+        <!-- ears -->
+        <circle cx="10" cy="10" r="9" fill="#111"/>
+        <circle cx="34" cy="10" r="9" fill="#111"/>
+        <!-- helmet -->
+        <circle cx="22" cy="24" r="15" fill="#D8EAF8" stroke="#4DC9C2" stroke-width="1.5"/>
+        <!-- visor -->
+        <ellipse cx="22" cy="24" rx="10" ry="9.5" fill="#0D2A4A" opacity=".9"/>
+        <ellipse cx="19" cy="19.5" rx="3" ry="2.5" fill="#4DC9C2" opacity=".5"/>
+        <!-- ear covers -->
+        <circle cx="9" cy="22" r="5" fill="#C8D8EE"/>
+        <circle cx="35" cy="22" r="5" fill="#C8D8EE"/>
+        <!-- body -->
+        <ellipse cx="22" cy="39" rx="13" ry="9" fill="#E8EEF8" stroke="#B0C4DC" stroke-width="1"/>
+        <!-- collar -->
+        <ellipse cx="22" cy="32" rx="9" ry="3" fill="#4DC9C2" opacity=".8"/>
+        <!-- left arm wave -->
+        <ellipse cx="8" cy="37" rx="4" ry="9" fill="#D8E4F4" stroke="#B0C4DC" stroke-width="1" transform="rotate(-20 8 37)">
+          <animateTransform attributeName="transform" type="rotate" values="-20 8 37; -5 8 37; -20 8 37" dur="1s" repeatCount="indefinite"/>
+        </ellipse>
+      </svg>
+    </div>
+    <div class="logo-wrap">
+      <span class="logo-text">PLANNER</span>
+      <span class="logo-sub">PEANAT.NN ✦</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <div class="gs-status" id="gcal-status" style="cursor:pointer;" onclick="handleGCalConnect()" title="คลิกเพื่อ login / สลับ account / sync">
+      <div class="gs-dot" id="gcal-dot" style="background:#8AA8CC;"></div>
+      <span id="gcal-status-text">เชื่อม GCal</span>
+    </div>
+    <button class="btn btn-add" onclick="openAddModal()">✨ เพิ่มนัดหมาย</button>
+    <button class="btn btn-notify" onclick="toggleNotif()">🔔 แจ้งเตือน<span class="notif-badge" id="notif-badge" style="display:none;">0</span></button>
+  </div>
+</header>
+
+<!-- Notif panel -->
+<div class="notif-panel" id="notif-panel">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div style="font-weight:800;font-size:15px;color:#4DC9C2;">🔔 การแจ้งเตือน</div>
+    <button class="notif-clear" onclick="clearActivityLog()">ล้างประวัติ</button>
+  </div>
+  <div class="notif-tabs">
+    <button class="ntab active" onclick="setNotifTab('upcoming',this)">⏰ ใกล้ถึง</button>
+    <button class="ntab" onclick="setNotifTab('gcal',this)">🗓️ GCal</button>
+    <button class="ntab" onclick="setNotifTab('activity',this)">📋 กิจกรรม</button>
+  </div>
+  <div id="notif-list"></div>
+</div>
+
+<!-- Today holiday banner (แสดงเมื่อมีวันหยุดวันนี้) -->
+<div id="holiday-banner" style="display:none;"></div>
+
+<!-- First-time setup banner -->
+<div id="setup-banner" style="display:none;background:linear-gradient(135deg,rgba(77,201,194,0.1),rgba(43,168,160,0.06));border:1.5px solid rgba(77,201,194,0.3);border-radius:14px;padding:12px 18px;margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+  <span style="font-size:22px;">🛰️</span>
+  <div style="flex:1;">
+    <div style="font-size:13px;font-weight:800;color:#4DC9C2;">เชื่อม Google Calendar เพื่อดูวันหยุด + นัดหมายทั้งหมดแบบ real-time</div>
+    <div style="font-size:11px;color:#8AA8CC;margin-top:2px;">ทำครั้งเดียว ใช้ได้ทุกอุปกรณ์ — deploy บน GitHub Pages แล้ว URL คงที่ตลอด</div>
+  </div>
+  <button onclick="handleGCalConnect();document.getElementById('setup-banner').style.display='none';" style="font-family:var(--font);font-size:13px;font-weight:800;padding:9px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#4DC9C2,#2BA8A0);color:#0D1B3E;cursor:pointer;white-space:nowrap;">🔗 เชื่อมเลย</button>
+  <button onclick="document.getElementById('setup-banner').style.display='none';" style="font-family:var(--font);font-size:12px;font-weight:700;padding:8px 12px;border-radius:10px;border:1.5px solid rgba(77,201,194,0.2);background:none;color:#8AA8CC;cursor:pointer;">ปิด</button>
+</div>
+
+<!-- ===== MAIN LAYOUT ===== -->
+<div class="main-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <!-- Summary -->
+    <div class="summary-card">
+      <div class="summary-tabs">
+        <button class="stab active" onclick="setSumTab('day',this)">วันนี้</button>
+        <button class="stab" onclick="setSumTab('week',this)">สัปดาห์</button>
+        <button class="stab" onclick="setSumTab('month',this)">เดือน</button>
+        <button class="stab" onclick="setSumTab('year',this)">ปี</button>
+      </div>
+      <div id="summary-content"></div>
+    </div>
+
+    <!-- Habit Tracker -->
+    <div class="habit-card">
+      <div class="habit-header">
+        <div class="habit-title">Habit Tracker</div>
+        <button class="habit-add-btn" onclick="openHabitModal()">+ เพิ่ม</button>
+      </div>
+      <div class="habit-month-label" id="habit-month-label"></div>
+      <div class="habit-week-row">
+        <div></div>
+        <div class="habit-week-label" id="hw0"></div>
+        <div class="habit-week-label" id="hw1"></div>
+        <div class="habit-week-label" id="hw2"></div>
+        <div class="habit-week-label" id="hw3"></div>
+        <div class="habit-week-label" id="hw4"></div>
+        <div class="habit-week-label" id="hw5"></div>
+        <div class="habit-week-label" id="hw6"></div>
+      </div>
+      <div id="habit-list"></div>
+    </div>
+
+  </div>
+
+  <!-- MAIN CALENDAR — full width -->
+  <div class="cal-area">
+    <div class="cal-header">
+      <div class="cal-title" id="cal-title"></div>
+      <div class="view-tabs">
+        <button class="vtab active" onclick="setView('month',this)">เดือน</button>
+        <button class="vtab" onclick="setView('week',this)">สัปดาห์</button>
+        <button class="vtab" onclick="setView('day',this)">วัน</button>
+      </div>
+      <div class="cal-nav">
+        <button class="nav-btn" onclick="navPrev()">‹</button>
+        <button class="nav-btn nav-today" onclick="goToday()">วันนี้</button>
+        <button class="nav-btn" onclick="navNext()">›</button>
+      </div>
+    </div>
+    <div id="cal-body"></div>
+  </div>
+
+</div><!-- end main-layout -->
+</div><!-- end wrap -->
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="closeModalOutside(event)">
+<div class="modal" id="modal-box">
+  <div class="modal-header">
+    <div class="modal-title" id="modal-title">✨ เพิ่มนัดหมายใหม่</div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="gcal-hint" id="gcal-modal-hint">🗓️ นัดหมายจะบันทึกใน <b>Google Calendar</b> โดยตรง — เปิดได้ทุกอุปกรณ์ทุกที่ ✨</div>
+  <div id="modal-body"></div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Google Sheet removed — using Google Calendar API only
+
+const CATS={
+  meeting:{label:'ประชุม',cls:'chip-meeting',bg:'#DDD6FF',color:'#4A3070'},
+  personal:{label:'ส่วนตัว',cls:'chip-personal',bg:'#FFD8EA',color:'#703050'},
+  work:{label:'งาน',cls:'chip-work',bg:'#B8F0D8',color:'#205040'},
+  health:{label:'สุขภาพ',cls:'chip-health',bg:'#FFE8B8',color:'#704020'},
+  travel:{label:'เดินทาง',cls:'chip-travel',bg:'#B8E8FF',color:'#204060'}
+};
+
+function fmt(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
+function saveEvents(){ /* no-op: Google Calendar is source of truth */ }
+
+let events=[]; // ข้อมูลทั้งหมดมาจาก Google Calendar API
+
+// ===== HABIT TRACKER =====
+// Icon map: keyword → minimal SVG icon (monochrome, teal)
+const HABIT_ICONS = [
+  {k:['วิ่ง','ออกกำลัง','exercise','run','gym','sport','กีฬา','yoga','ยิม'],   svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="3.5" r="1.5"/><path d="M10 6l-3 4h5l-1 5"/><path d="M7 10l-2 5"/><path d="M15 8l-1.5 2"/></svg>'},
+  {k:['อ่าน','หนังสือ','book','read','study','เรียน'],                          svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h5v13H4z"/><path d="M9 4h1l5 2v11l-5-2H9"/><path d="M9 17V4"/></svg>'},
+  {k:['น้ำ','water','ดื่ม','drink'],                                             svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 C10 3 5 9 5 13a5 5 0 0010 0C15 9 10 3 10 3z"/><path d="M8 14a2 2 0 003-2"/></svg>'},
+  {k:['เพลง','ดนตรี','music','guitar','piano','sing','ร้องเพลง','ฝึก'],         svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="15" r="2"/><circle cx="14" cy="13" r="2"/><path d="M8 15V7l8-2v8"/><path d="M8 11l8-2"/></svg>'},
+  {k:['นอน','sleep','พัก','rest'],                                               svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10a7 7 0 0011-6 7 7 0 100 12A7 7 0 013 10z"/></svg>'},
+  {k:['สมาธิ','meditation','นั่งสมาธิ','breath','mindful'],                     svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="5" r="2"/><path d="M6 10c0-2 2-3 4-3s4 1 4 3"/><path d="M4 16c1-3 3-4 6-4s5 1 6 4"/></svg>'},
+  {k:['กิน','อาหาร','food','eat','meal','diet','ผัก'],                          svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v5a3 3 0 006 0V3"/><path d="M9 8v9"/><path d="M15 3v12"/><path d="M13 3c0 3 2 4 2 6"/></svg>'},
+  {k:['code','โค้ด','program','dev','เขียน','write','บันทึก','journal','diary'], svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l-4 3 4 3"/><path d="M13 7l4 3-4 3"/><path d="M11 5l-2 10"/></svg>'},
+  {k:['ทำความสะอาด','clean','house','บ้าน'],                                    svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h14"/><path d="M5 17V9l5-6 5 6v8"/><path d="M8 17v-5h4v5"/></svg>'},
+  {k:['ออมเงิน','เงิน','money','save','finance','บัญชี'],                       svg:'<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M10 6v1m0 6v1"/><path d="M8 8.5C8 7.7 8.9 7 10 7s2 .7 2 1.5-1 1.3-2 1.5-2 .8-2 1.5S8.9 13 10 13s2-.7 2-1.5"/></svg>'},
+];
+const DEFAULT_ICON = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7"/><path d="M10 7v3l2 2"/></svg>';
+
+function getHabitIcon(name){
+  const low=name.toLowerCase();
+  for(const {k,svg} of HABIT_ICONS){if(k.some(kw=>low.includes(kw)))return svg;}
+  return DEFAULT_ICON;
+}
+
+let habits=JSON.parse(localStorage.getItem('sp-habits')||'[]');
+if(!habits.length){
+  habits=[
+    {id:'h1',name:'ออกกำลังกาย',logs:{}},
+    {id:'h2',name:'อ่านหนังสือ',logs:{}},
+    {id:'h3',name:'ดื่มน้ำ 8 แก้ว',logs:{}},
+  ];
+  localStorage.setItem('sp-habits',JSON.stringify(habits));
+}
+function saveHabits(){localStorage.setItem('sp-habits',JSON.stringify(habits));}
+
+function getWeek7(){
+  const today=new Date(),dow=today.getDay(),mondayOffset=dow===0?-6:1-dow;
+  return Array.from({length:7},(_,i)=>{const d=new Date(today);d.setDate(today.getDate()+mondayOffset+i);return fmt(d.getFullYear(),d.getMonth(),d.getDate());});
+}
+
+function renderHabits(){
+  const week=getWeek7();
+  const today=fmt(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
+  const months=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const dayLabels=['จ','อ','พ','พฤ','ศ','ส','อา'];
+  const d0=new Date(week[0]),d6=new Date(week[6]);
+  document.getElementById('habit-month-label').textContent=`${d0.getDate()} ${months[d0.getMonth()]} – ${d6.getDate()} ${months[d6.getMonth()]}`;
+  week.forEach((ds,i)=>{
+    const el=document.getElementById('hw'+i);
+    if(el){el.textContent=dayLabels[i];el.style.color=ds===today?'#D63031':'#4DC9C2';el.style.fontWeight=ds===today?'900':'700';}
+  });
+  let html='';
+  if(!habits.length){html='<div class="habit-empty">กด + เพิ่ม habit แรก</div>';}
+  habits.forEach(h=>{
+    // streak count
+    let streak=0,checkD=new Date();
+    while(true){const ds=fmt(checkD.getFullYear(),checkD.getMonth(),checkD.getDate());if(h.logs[ds])streak++;else break;checkD.setDate(checkD.getDate()-1);}
+    const icon=getHabitIcon(h.name);
+    let dots=week.map((ds,i)=>{
+      const done=h.logs[ds]||false,isToday=ds===today;
+      return `<div class="habit-dot${done?' done':''}${isToday?' today-col':''}" onclick="toggleHabit('${h.id}','${ds}')" title="${ds}"></div>`;
+    }).join('');
+    html+=`<div class="habit-row">
+      <div class="habit-name-cell">
+        <div class="habit-icon" style="color:#4DC9C2;">${icon}</div>
+        <span class="habit-name" title="${h.name}" onclick="openHabitModal('${h.id}')">${h.name}</span>
+        <div class="habit-actions">
+          <button class="habit-act-btn habit-edit-btn" onclick="openHabitModal('${h.id}')" title="แก้ไข">✎</button>
+          <button class="habit-act-btn habit-del-btn" onclick="deleteHabit('${h.id}')" title="ลบ">✕</button>
+        </div>
+      </div>
+      ${dots}
+    </div>`;
+    if(streak>=2){
+      const pct=Math.min(streak/30*100,100);
+      html+=`<div style="display:grid;grid-template-columns:100px 1fr;gap:3px;margin-bottom:4px;margin-top:-3px;">
+        <div></div>
+        <div style="display:flex;align-items:center;gap:5px;padding-right:2px;">
+          <div class="habit-streak-bar" style="width:${pct}%"></div>
+          <span class="habit-streak-txt">🔥 ${streak} วัน</span>
+        </div>
+      </div>`;
+    }
+  });
+  document.getElementById('habit-list').innerHTML=html;
+}
+
+function toggleHabit(hid,ds){
+  const h=habits.find(x=>x.id===hid);if(!h)return;
+  h.logs[ds]=!h.logs[ds];
+  saveHabits();renderHabits();
+  if(h.logs[ds])showToast(`${h.name} ✓`,'','done');
+}
+function deleteHabit(hid){
+  if(!confirm('ลบ habit นี้?'))return;
+  habits=habits.filter(x=>x.id!==hid);saveHabits();renderHabits();
+}
+
+// Habit modal (add + edit)
+let _editHabitId=null;
+function openHabitModal(hid){
+  _editHabitId=hid||null;
+  const h=hid?habits.find(x=>x.id===hid):null;
+  const iconsHTML=HABIT_ICONS.map((ic,i)=>
+    `<div class="icon-opt${h&&getHabitIcon(h.name)===ic.svg?' sel':''}" style="color:#4DC9C2;" data-idx="${i}" onclick="selectIconOpt(this)">${ic.svg}</div>`
+  ).join('')+`<div class="icon-opt" style="color:#4DC9C2;" data-idx="-1" onclick="selectIconOpt(this)">${DEFAULT_ICON}</div>`;
+  const overlay=document.createElement('div');
+  overlay.className='habit-modal-overlay';overlay.id='habit-modal-overlay';
+  overlay.innerHTML=`<div class="habit-modal">
+    <div class="habit-modal-title">${h?'✎ แก้ไข Habit':'＋ เพิ่ม Habit'}</div>
+    <input id="hm-name" placeholder="ชื่อ habit เช่น ออกกำลังกาย, อ่านหนังสือ..." value="${h?h.name:''}">
+    <div style="font-size:11px;font-weight:700;color:#8AA8CC;margin-bottom:6px;">ไอคอน (ระบบเลือกให้อัตโนมัติตามชื่อ)</div>
+    <div class="habit-icon-picker" id="hm-icons">${iconsHTML}</div>
+    <div class="habit-modal-row">
+      <button class="habit-modal-cancel" onclick="closeHabitModal()">ยกเลิก</button>
+      <button class="habit-modal-save" onclick="saveHabitModal()">บันทึก</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeHabitModal();});
+  document.getElementById('hm-name').focus();
+  // live-preview icon as user types
+  document.getElementById('hm-name').addEventListener('input',function(){
+    document.querySelectorAll('#hm-icons .icon-opt').forEach(el=>el.classList.remove('sel'));
+  });
+}
+function selectIconOpt(el){document.querySelectorAll('#hm-icons .icon-opt').forEach(e=>e.classList.remove('sel'));el.classList.add('sel');}
+function closeHabitModal(){const el=document.getElementById('habit-modal-overlay');if(el)el.remove();_editHabitId=null;}
+function saveHabitModal(){
+  const name=document.getElementById('hm-name').value.trim();
+  if(!name){document.getElementById('hm-name').focus();return;}
+  if(_editHabitId){
+    const h=habits.find(x=>x.id===_editHabitId);if(h)h.name=name;
+  }else{
+    habits.push({id:'h'+Date.now(),name,logs:{}});
+  }
+  saveHabits();closeHabitModal();renderHabits();
+  showToast(_editHabitId?`แก้ไข "${name}" แล้ว`:` "${name}" เพิ่มแล้ว`,'','add');
+}
+
+
+function playTing(type){
+  try{const ctx=new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);
+    if(type==='add'){o.frequency.setValueAtTime(880,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(1320,ctx.currentTime+.08);}
+    else if(type==='done'){o.frequency.setValueAtTime(660,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(990,ctx.currentTime+.12);}
+    else if(type==='delete'){o.frequency.setValueAtTime(440,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(220,ctx.currentTime+.15);}
+    else{o.frequency.setValueAtTime(1046,ctx.currentTime);}
+    o.type='sine';g.gain.setValueAtTime(.18,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.45);
+    o.start(ctx.currentTime);o.stop(ctx.currentTime+.45);}catch(e){}
+}
+function showToast(msg,icon,sound){
+  playTing(sound||'default');
+  const t=document.getElementById('toast');t.innerHTML=(icon?icon+' ':'')+msg;t.classList.remove('show');
+  void t.offsetWidth;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+let curView='month',curDate=new Date(),selectedDate=new Date(),editId=null,sumTab='day';
+
+function getTitle(){
+  const months=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const days=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  if(curView==='month')return months[curDate.getMonth()]+' '+(curDate.getFullYear()+543);
+  if(curView==='week'){const s=new Date(curDate);s.setDate(curDate.getDate()-curDate.getDay());const e=new Date(s);e.setDate(s.getDate()+6);return `${s.getDate()} – ${e.getDate()} ${months[e.getMonth()]} ${e.getFullYear()+543}`;}
+  return `${days[curDate.getDay()]} ${curDate.getDate()} ${months[curDate.getMonth()]} ${curDate.getFullYear()+543}`;
+}
+
+function renderMonth(){
+  const y=curDate.getFullYear(),m=curDate.getMonth();
+  const first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate(),today=new Date();
+  const dLabels=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  let html=dLabels.map(l=>`<div class="day-label">${l}</div>`).join('');
+  const prevLast=new Date(y,m,0).getDate();
+  for(let i=0;i<first;i++){const d=prevLast-first+1+i;html+=`<div class="day-cell other" onclick="openAddModal('${fmt(y,m-1,d)}')"><div class="day-num">${d}</div></div>`;}
+  for(let d=1;d<=last;d++){
+    const ds=fmt(y,m,d);
+    const isToday=y===today.getFullYear()&&m===today.getMonth()&&d===today.getDate();
+    const isSel=ds===fmt(selectedDate.getFullYear(),selectedDate.getMonth(),selectedDate.getDate());
+    const dayEvs=events.filter(e=>e.date===ds).sort((a,b)=>a.time>b.time?1:-1);
+    
+    // รวม GCal events
+    const dayGCal=gcalEvents.filter(e=>e.date===ds);
+    const dayHolidays=dayGCal.filter(e=>e.isHoliday);
+    const dayGCalNormal=dayGCal.filter(e=>!e.isHoliday);
+    
+    // Space emoji สำหรับวันหยุดสำคัญ
+    let holidayEmojis='';
+    const usedEmojis=new Set();
+    dayHolidays.forEach(e=>{
+      const em=e.spaceEmoji||'🛸';
+      if(!usedEmojis.has(em)){
+        usedEmojis.add(em);
+        holidayEmojis+=`<span title="${e.title}" style="font-size:14px;cursor:default;line-height:1;">${em}</span>`;
+      }
+    });
+    
+    // Holiday label chips
+    let holChips='';
+    dayHolidays.slice(0,2).forEach(e=>{
+      holChips+=`<div class="event-chip" style="background:rgba(255,200,80,0.15);color:#FFE87A;border:1px solid rgba(255,200,80,0.35);font-size:10px;" title="${e.calName||'วันหยุด'}">${e.spaceEmoji||'🛸'} ${e.title.length>12?e.title.substring(0,11)+'…':e.title}</div>`;
+    });
+
+    let chips='';
+    dayEvs.slice(0,2).forEach(e=>{chips+=`<div class="event-chip ${CATS[e.cat]?.cls||'chip-work'} ${e.done?'chip-done':''}" onclick="viewEvent('${e.id}',event)">${e.time?e.time.substring(0,5)+' ':''} ${e.title}</div>`;});
+    
+    // GCal normal events already in dayEvs (events[] = gcalEvents non-holiday)
+    let gcalChips='';
+
+    const totalExtra = dayEvs.length + dayHolidays.length;
+    const shownCount = Math.min(dayEvs.length,2) + dayHolidays.length;
+    const moreCount = Math.max(0, dayEvs.length - 2);
+
+    let moreChip = moreCount>0 ? `<div class="more-chip">+${moreCount} อีก</div>` : '';
+    
+    // highlight วันหยุด
+    const isHoliday = dayHolidays.length > 0;
+    const cellStyle = isHoliday ? ' style="background:rgba(255,200,80,0.06);"' : '';
+    
+    html+=`<div class="day-cell${isToday?' today':''}${isSel?' selected':''}"${cellStyle} onclick="openAddModal('${ds}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:2px;">
+        <div class="day-num">${d}</div>
+        ${holidayEmojis?`<div style="display:flex;gap:1px;flex-wrap:wrap;justify-content:flex-end;">${holidayEmojis}</div>`:''}
+      </div>
+      ${holChips}${chips}${gcalChips}${moreChip}
+    </div>`;
+  }
+  const total=first+last,rem=total%7===0?0:7-(total%7);
+  for(let d=1;d<=rem;d++){html+=`<div class="day-cell other" onclick="openAddModal('${fmt(y,m+1,d)}')"><div class="day-num">${d}</div></div>`;}
+  document.getElementById('cal-body').innerHTML=`<div class="month-grid">${html}</div>`;
+}
+
+function renderWeek(){
+  const start=new Date(curDate);start.setDate(curDate.getDate()-curDate.getDay());
+  const days=[];for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);days.push(d);}
+  const today=new Date();
+  const dNames=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  let header='<div style="grid-column:1"></div>';
+  days.forEach((d,i)=>{const isT=d.toDateString()===today.toDateString();const dn=`<div class="week-day-num${isT?' today':''}">${d.getDate()}</div>`;header+=`<div class="week-day-head"><div class="week-day-name">${dNames[i]}</div>${dn}</div>`;});
+  let body='';
+  for(let h=7;h<21;h++){
+    body+=`<div class="hour-label">${h}:00</div>`;
+    days.forEach(d=>{const ds=fmt(d.getFullYear(),d.getMonth(),d.getDate());const hEvs=events.filter(e=>e.date===ds&&e.time&&parseInt(e.time)===h);let inner=hEvs.map(e=>`<div class="event-chip ${CATS[e.cat]?.cls||'chip-work'} ${e.done?'chip-done':''}" style="margin:0 0 2px;" onclick="viewEvent('${e.id}',event)">${e.time} ${e.title}</div>`).join('');body+=`<div class="hour-cell" onclick="openAddModal('${ds}')">${inner}</div>`;});
+  }
+  document.getElementById('cal-body').innerHTML=`<div class="week-grid" style="grid-template-columns:48px repeat(7,1fr);">${header}${body}</div>`;
+}
+
+function renderDay(){
+  const ds=fmt(curDate.getFullYear(),curDate.getMonth(),curDate.getDate());
+  const dNames=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+  const months=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const dayEvs=events.filter(e=>e.date===ds).sort((a,b)=>a.time>b.time?1:-1);
+  let timeline='';
+  for(let h=7;h<21;h++){
+    const hEvs=dayEvs.filter(e=>e.time&&parseInt(e.time)===h);
+    let blocks=hEvs.map(e=>`<div class="event-chip ${CATS[e.cat]?.cls||'chip-work'} ${e.done?'chip-done':''}" style="padding:7px 10px;margin:2px 0;font-size:13px;" onclick="viewEvent('${e.id}',event)">${e.time} — ${e.title}${e.loc?' 📍'+e.loc:''}</div>`).join('');
+    timeline+=`<div style="font-size:11px;color:var(--text3);height:52px;display:flex;align-items:flex-start;justify-content:flex-end;padding-right:8px;padding-top:4px;border-top:1.5px solid rgba(77,201,194,0.2);font-weight:600;">${h}:00</div>`;
+    timeline+=`<div style="border-top:1.5px solid rgba(77,201,194,0.2);padding:2px 4px;min-height:52px;" onclick="openAddModal('${ds}')">${blocks}</div>`;
+  }
+  const noEvMsg=dayEvs.length===0?`<div class="empty-day">🌙 ยังไม่มีนัดหมายวันนี้</div>`:'';
+  document.getElementById('cal-body').innerHTML=`<div class="day-header-big"><div class="day-big-name">${dNames[curDate.getDay()]}</div><div class="day-big-num">${curDate.getDate()} ${months[curDate.getMonth()]} ${curDate.getFullYear()+543}</div></div><div style="display:grid;grid-template-columns:48px 1fr;">${timeline}</div>${noEvMsg}`;
+}
+
+function setView(v,el){
+  const viewChanged = v !== curView;
+  curView=v;
+  if(el){
+    document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    // เปลี่ยน view type → reset range cache + fetch ใหม่
+    if(viewChanged){ _lastFetchedRange=''; if(isGCalTokenValid()) fetchAllGCalEvents(); }
+  }
+  document.getElementById('cal-title').textContent=getTitle();
+  if(v==='month')renderMonth();else if(v==='week')renderWeek();else renderDay();
+}
+function navPrev(){
+  if(curView==='month')curDate=new Date(curDate.getFullYear(),curDate.getMonth()-1,1);
+  else if(curView==='week')curDate=new Date(curDate.getTime()-7*86400000);
+  else curDate=new Date(curDate.getTime()-86400000);
+  setView(curView);
+  // fetch ตาม range ใหม่ที่เลื่อนไป
+  if(isGCalTokenValid()) fetchAllGCalEvents();
+}
+function navNext(){
+  if(curView==='month')curDate=new Date(curDate.getFullYear(),curDate.getMonth()+1,1);
+  else if(curView==='week')curDate=new Date(curDate.getTime()+7*86400000);
+  else curDate=new Date(curDate.getTime()+86400000);
+  setView(curView);
+  if(isGCalTokenValid()) fetchAllGCalEvents();
+}
+function goToday(){
+  curDate=new Date();selectedDate=new Date();setView(curView);
+  if(isGCalTokenValid()) fetchAllGCalEvents();
+}
+
+function setSumTab(tab,el){sumTab=tab;document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderSummary();}
+function renderSummary(){
+  const today=new Date(),ty=today.getFullYear(),tm=today.getMonth();
+  let filtered=[];
+  if(sumTab==='day')filtered=events.filter(e=>e.date===fmt(ty,tm,today.getDate()));
+  else if(sumTab==='week'){const ws=new Date(today);ws.setDate(today.getDate()-today.getDay());const we=new Date(ws);we.setDate(ws.getDate()+6);filtered=events.filter(e=>{const d=new Date(e.date);return d>=ws&&d<=we;});}
+  else if(sumTab==='month')filtered=events.filter(e=>e.date.startsWith(fmt(ty,tm,1).substring(0,7)));
+  else filtered=events.filter(e=>e.date.startsWith(ty+''));
+  const done=filtered.filter(e=>e.done).length,pending=filtered.length-done;
+  let html=`<div class="summary-stat"><span>ทั้งหมด</span><span class="stat-num">${filtered.length}</span></div><div class="summary-stat"><span>เสร็จแล้ว ✅</span><span class="stat-num">${done}</span></div><div class="summary-stat"><span>รอดำเนินการ 🌙</span><span class="stat-num">${pending}</span></div><div class="summary-list">`;
+  if(!filtered.length)html+=`<div style="text-align:center;color:var(--text3);font-size:12px;padding:12px;">🌟 ไม่มีแผน</div>`;
+  filtered.sort((a,b)=>a.date>b.date?1:a.date<b.date?-1:a.time>b.time?1:-1).forEach(e=>{
+    const cat=CATS[e.cat]||CATS.work;
+    html+=`<div class="sum-event" onclick="viewEvent('${e.id}',event)"><div class="sum-dot" style="background:${cat.bg};border:1px solid ${cat.color}40;"></div><div><div class="sum-info ${e.done?'sum-done':''}">${e.title}</div><div class="sum-time">${e.date} ${e.time||''} ${e.loc?'📍'+e.loc:''}</div></div></div>`;
+  });
+  document.getElementById('summary-content').innerHTML=html+'</div>';
+}
+
+// ===== NOTIFICATION + ACTIVITY LOG =====
+// GCal state (declared early so updateNotifBadge can reference it)
+let gcalEvents = JSON.parse(localStorage.getItem('gcal_events') || '[]');
+let gcalUnreadCount = 0;
+
+let activityLog = JSON.parse(localStorage.getItem('sp-activity')||'[]');
+let notifTab = 'upcoming';
+
+function saveActivity(){ localStorage.setItem('sp-activity', JSON.stringify(activityLog.slice(0,50))); }
+
+function addActivity(type, title, detail){
+  const icons = {add:'➕', edit:'✏️', done:'✅', delete:'🗑️', sync:'🔄'};
+  const labels = {add:'เพิ่มนัดหมาย', edit:'แก้ไข', done:'เสร็จแล้ว', delete:'ลบ', sync:'ซิงค์จาก Sheet'};
+  const dots = {add:'dot-add', edit:'dot-edit', done:'dot-done', delete:'dot-delete', sync:'dot-info'};
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  const dateStr = now.toLocaleDateString('th-TH',{day:'numeric',month:'short'});
+  activityLog.unshift({
+    type, title, detail: detail||'',
+    icon: icons[type]||'•',
+    label: labels[type]||type,
+    dot: dots[type]||'dot-info',
+    time: timeStr,
+    date: dateStr,
+    ts: Date.now()
+  });
+  saveActivity();
+  // อัพเดท badge รวม
+  updateNotifBadge();
+  // ถ้าแผงเปิดอยู่ให้ render ใหม่
+  if(document.getElementById('notif-panel').classList.contains('open')) renderNotifList();
+}
+
+function updateNotifBadge(){
+  const now = new Date();
+  const todayStr = fmt(now.getFullYear(), now.getMonth(), now.getDate());
+
+  // นัดจาก local events ใน 2 ชม.
+  const upcoming = events.filter(e=>{
+    if(e.done||!e.time) return false;
+    const evDt = new Date(e.date+'T'+e.time);
+    const diff = (evDt-now)/60000;
+    return diff>0 && diff<=120;
+  });
+
+  // นัดจาก GCal ใน 2 ชม.
+  const gcalUpcoming = gcalEvents.filter(e=>{
+    if(!e.time||!e.date) return false;
+    const evDt = new Date(e.date+'T'+e.time);
+    const diff = (evDt-now)/60000;
+    return diff>0 && diff<=120;
+  });
+
+  // วันหยุดสำคัญ/GCal วันนี้ (all-day events) — นับแยก
+  const todayHolidays = gcalEvents.filter(e => e.date === todayStr && e.isHoliday && !e.time);
+  const todayGCalAllDay = gcalEvents.filter(e => e.date === todayStr && !e.isHoliday && !e.time);
+
+  // activity ที่ยังไม่ได้เปิด
+  const newAct = activityLog.filter(a=>!a.seen).length;
+
+  const total = upcoming.length + gcalUpcoming.length + todayHolidays.length + todayGCalAllDay.length + newAct;
+  const badge = document.getElementById('notif-badge');
+  if (badge) {
+    badge.textContent = total > 99 ? '99+' : total;
+    badge.style.display = total ? 'flex' : 'none';
+    if (total > 0) badge.style.animation = 'badge-pulse 1.5s ease-in-out infinite';
+    else badge.style.animation = '';
+  }
+}
+
+function setNotifTab(tab, el){
+  notifTab = tab;
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderNotifList();
+}
+
+function renderNotifList(){
+  const list = document.getElementById('notif-list');
+  const now = new Date();
+  const todayStr = fmt(now.getFullYear(), now.getMonth(), now.getDate());
+
+  if(notifTab === 'upcoming'){
+    const localUp = events.filter(e=>{
+      if(e.done||!e.time) return false;
+      const evDt = new Date(e.date+'T'+e.time);
+      const diff = (evDt-now)/60000;
+      return diff>0 && diff<=120;
+    });
+    const gcalUp = gcalEvents.filter(e=>{
+      if(!e.time||!e.date) return false;
+      const evDt = new Date(e.date+'T'+e.time);
+      const diff = (evDt-now)/60000;
+      return diff>0 && diff<=120;
+    });
+    // วันหยุด/วันสำคัญวันนี้ (all-day)
+    const todaySpecial = gcalEvents.filter(e => e.date === todayStr && e.isHoliday && !e.time);
+    const todayGCal = gcalEvents.filter(e => e.date === todayStr && !e.isHoliday && !e.time);
+
+    const upcoming = [...localUp, ...gcalUp].sort((a,b)=>(a.date+a.time)>(b.date+b.time)?1:-1);
+
+    let html = '';
+
+    // วันสำคัญวันนี้ (banner พิเศษ)
+    if (todaySpecial.length || todayGCal.length) {
+      html += `<div style="background:rgba(255,200,80,0.08);border:1px solid rgba(255,200,80,0.25);border-radius:12px;padding:10px 12px;margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:800;color:#FFE87A;margin-bottom:6px;">📅 วันนี้</div>`;
+      [...todaySpecial, ...todayGCal].forEach(e => {
+        const em = e.spaceEmoji || (e.isHoliday ? '🛸' : '🗓️');
+        html += `<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+          <span style="font-size:16px;">${em}</span>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#FFF;">${e.title}</div>
+            ${e.calName?`<div style="font-size:11px;color:#8AA8CC;">${e.calName}</div>`:''}
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    if(!upcoming.length && !html){
+      list.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">🌙 ไม่มีนัดหมายใน 2 ชั่วโมงข้างหน้า</div>';
+      return;
+    }
+
+    if (upcoming.length) {
+      html += `<div style="font-size:11px;font-weight:800;color:#4DC9C2;margin-bottom:6px;">⏰ ใน 2 ชั่วโมงข้างหน้า</div>`;
+      html += upcoming.map(e=>{
+        const evDt = new Date(e.date+'T'+e.time);
+        const diff = Math.round((evDt-now)/60000);
+        const urg = diff<=30?'urgent':diff<=60?'soon':'info';
+        const dot = urg==='urgent'?'dot-urgent':urg==='soon'?'dot-soon':'dot-info';
+        const gcalBadge = e.fromGCal ? `<span style="font-size:10px;background:rgba(77,201,194,0.2);color:#4DC9C2;padding:1px 6px;border-radius:4px;margin-left:4px;">GCal</span>` : '';
+        return `<div class="notif-item ${urg}" ${!e.fromGCal?`onclick="viewEvent('${e.id}',event)"`:'style="cursor:default;"'}>
+          <div class="notif-dot ${dot}"></div>
+          <div>
+            <div class="notif-text">⏰ ${e.title}${gcalBadge}</div>
+            <div class="notif-time">อีก ${diff} นาที${e.loc?' — 📍'+e.loc:''}${e.calName?' · '+e.calName:''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    list.innerHTML = html;
+
+  } else if (notifTab === 'gcal') {
+    // แสดง GCal events ที่กำลังจะมาใน 14 วัน แยกวันหยุดออกมาก่อน
+    const in14 = new Date(now.getTime() + 14*24*60*60*1000);
+    const soon14 = gcalEvents.filter(e=>{
+      const d = new Date(e.date + (e.time ? 'T'+e.time : 'T00:00:00'));
+      return d >= now && d <= in14;
+    }).sort((a,b)=>(a.date+(a.time||''))>(b.date+(b.time||''))?1:-1);
+    if (!isGCalTokenValid()) {
+      list.innerHTML = `<div style="text-align:center;padding:20px 0;">
+        <div style="font-size:32px;margin-bottom:8px;">🗓️</div>
+        <div style="color:#C8D8F0;font-size:13px;font-weight:600;margin-bottom:12px;">ยังไม่ได้เชื่อม Google Calendar</div>
+        <button onclick="handleGCalConnect()" style="font-family:var(--font);font-size:13px;font-weight:800;padding:10px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#4DC9C2,#2BA8A0);color:#0D1B3E;cursor:pointer;">🔗 เชื่อมเลย</button>
+      </div>`;
+      return;
+    }
+    if (!soon14.length) {
+      list.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">🌟 ไม่มีนัดหมายใน 14 วันข้างหน้า</div>';
+      return;
+    }
+    const days=['อา','จ','อ','พ','พฤ','ศ','ส'];
+    const holidays14 = soon14.filter(e=>e.isHoliday);
+    const normal14 = soon14.filter(e=>!e.isHoliday);
+    let gcalHtml = '';
+    if (holidays14.length) {
+      gcalHtml += `<div style="font-size:11px;font-weight:800;color:#FFE87A;margin-bottom:6px;">🛸 วันหยุดสำคัญ</div>`;
+      gcalHtml += holidays14.map(e=>{
+        const d = new Date(e.date);
+        const emoji = e.spaceEmoji || '🛸';
+        return `<div class="notif-item soon" style="cursor:default;">
+          <div style="font-size:18px;line-height:1;">${emoji}</div>
+          <div style="flex:1;">
+            <div class="notif-text">${e.title}</div>
+            <div class="notif-time">${days[d.getDay()]} ${e.date} ${e.calName?'· '+e.calName:''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    if (normal14.length) {
+      gcalHtml += `<div style="font-size:11px;font-weight:800;color:#4DC9C2;margin-bottom:6px;margin-top:${holidays14.length?'10px':'0'};">🗓️ นัดหมาย</div>`;
+      gcalHtml += normal14.map(e=>{
+        const d = new Date(e.date);
+        const emoji = e.spaceEmoji || '🗓️';
+        return `<div class="notif-item info" style="cursor:default;">
+          <div style="font-size:18px;line-height:1;">${emoji}</div>
+          <div style="flex:1;">
+            <div class="notif-text">${e.title}</div>
+            <div class="notif-time">${days[d.getDay()]} ${e.date}${e.time?' · '+e.time:''} ${e.calName?'· '+e.calName:''}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    list.innerHTML = gcalHtml;
+
+  } else {
+    // Activity tab — mark all seen
+    activityLog.forEach(a=>a.seen=true);
+    saveActivity();
+    updateNotifBadge();
+    if(!activityLog.length){
+      list.innerHTML='<div style="color:var(--text3);font-size:13px;text-align:center;padding:16px 0;">ยังไม่มีกิจกรรม</div>';
+      return;
+    }
+    list.innerHTML = activityLog.map(a=>`
+      <div class="notif-item activity">
+        <div class="notif-dot ${a.dot}" style="margin-top:4px;"></div>
+        <div style="flex:1;">
+          <div class="notif-text">${a.icon} <b>${a.label}</b> — ${a.title}</div>
+          ${a.detail?`<div class="notif-time">${a.detail}</div>`:''}
+          <div class="notif-time">${a.date} ${a.time}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function renderHolidayBanner(){
+  const banner = document.getElementById('holiday-banner');
+  if (!banner) return;
+  const now = new Date();
+  const todayStr = fmt(now.getFullYear(), now.getMonth(), now.getDate());
+  const todayHols = gcalEvents.filter(e => e.date === todayStr && e.isHoliday && !e.time);
+  if (!todayHols.length) { banner.style.display='none'; return; }
+  const emojis = [...new Set(todayHols.map(e=>e.spaceEmoji||'🛸'))].join(' ');
+  const names = todayHols.map(e=>e.title).join(' · ');
+  const calNames = [...new Set(todayHols.map(e=>e.calName).filter(Boolean))].join(', ');
+  banner.style.display='flex';
+  banner.className='holiday-banner';
+  banner.innerHTML=`<div class="holiday-banner-emoji">${emojis}</div>
+    <div>
+      <div class="holiday-banner-text">${names}</div>
+      ${calNames?`<div class="holiday-banner-sub">${calNames}</div>`:''}
+    </div>`;
+}
+
+function checkNotifications(){
+  updateNotifBadge();
+  renderHolidayBanner();
+  if(document.getElementById('notif-panel').classList.contains('open')) renderNotifList();
+}
+
+function toggleNotif(){
+  const p = document.getElementById('notif-panel');
+  p.classList.toggle('open');
+  if(p.classList.contains('open')) renderNotifList();
+}
+
+function clearActivityLog(){
+  activityLog=[];
+  saveActivity();
+  updateNotifBadge();
+  renderNotifList();
+}
+
+let pendingDate='';
+function openAddModal(dateStr){
+  editId=null;pendingDate=dateStr||fmt(curDate.getFullYear(),curDate.getMonth(),curDate.getDate());
+  document.getElementById('modal-title').textContent='✨ เพิ่มนัดหมายใหม่';
+  document.getElementById('modal-body').innerHTML=buildForm({date:pendingDate,cat:'meeting'});
+  document.getElementById('modal').style.display='flex';
+}
+function viewEvent(id,e){
+  if(e)e.stopPropagation();
+  const ev=events.find(x=>x.id===id);if(!ev)return;
+  const cat=CATS[ev.cat]||CATS.work;
+  document.getElementById('modal-title').textContent='🌸 รายละเอียดนัดหมาย';
+  document.getElementById('modal-body').innerHTML=`
+    <div style="background:${cat.bg}30;border-radius:14px;padding:14px;margin-bottom:14px;border:1.5px solid ${cat.color}30;">
+      <div style="font-size:19px;font-weight:800;color:#fff;margin-bottom:4px;">${ev.title}</div>
+      <div style="font-size:13px;font-weight:700;color:${cat.color};background:${cat.bg};display:inline-block;padding:3px 10px;border-radius:6px;">${cat.label}</div>
+      ${ev.done?'<span style="margin-left:8px;font-size:13px;font-weight:700;background:#B8FFD8;color:#205040;padding:3px 10px;border-radius:6px;">✅ เสร็จแล้ว</span>':''}
+    </div>
+    <div class="view-event-detail"><div class="ved-label">📅 วันที่</div><div class="ved-val">${ev.date}</div></div>
+    ${ev.time?`<div class="view-event-detail"><div class="ved-label">🕐 เวลา</div><div class="ved-val">${ev.time}${ev.timeEnd?' — '+ev.timeEnd:''}</div></div>`:''}
+    ${ev.who?`<div class="view-event-detail"><div class="ved-label">👥 ผู้เกี่ยวข้อง</div><div class="ved-val">${ev.who}</div></div>`:''}
+    ${ev.loc?`<div class="view-event-detail"><div class="ved-label">📍 สถานที่</div><div class="ved-val">${ev.loc}</div>${ev.mapUrl?`<a class="map-link" href="${ev.mapUrl}" target="_blank">🗺️ เปิด Google Maps</a>`:''}</div>`:''}
+    ${ev.note?`<div class="view-event-detail"><div class="ved-label">📝 บันทึก</div><div class="ved-val">${ev.note}</div></div>`:''}
+    <div class="modal-actions">
+      <button class="btn-delete" onclick="deleteEvent('${ev.id}')">🗑️ ลบ</button>
+      ${!ev.done?`<button class="btn-done-mark" onclick="markDone('${ev.id}')">✅ Done</button>`:''}
+      <button class="btn-save" onclick="editEvent('${ev.id}')">✏️ แก้ไข</button>
+    </div>`;
+  document.getElementById('modal').style.display='flex';
+}
+function editEvent(id){const ev=events.find(x=>x.id===id);if(!ev)return;editId=id;document.getElementById('modal-title').textContent='✏️ แก้ไขนัดหมาย';document.getElementById('modal-body').innerHTML=buildForm(ev);}
+function buildHours(t){const cur=t?parseInt(t.split(':')[0]):-1;let o='<option value="">-- ชม --</option>';for(let h=0;h<24;h++)o+=`<option value="${String(h).padStart(2,'0')}" ${cur===h?'selected':''}>${String(h).padStart(2,'0')}</option>`;return o;}
+function buildMins(t){const cur=t?parseInt(t.split(':')[1]):-1;let o='<option value="">-- นาที --</option>';for(let m=0;m<60;m+=5)o+=`<option value="${String(m).padStart(2,'0')}" ${cur===m?'selected':''}>${String(m).padStart(2,'0')}</option>`;return o;}
+function buildForm(ev){
+  const isOther=ev.cat&&!CATS[ev.cat];const catSel=isOther?'other':ev.cat||'meeting';
+  const catDrop=Object.entries(CATS).map(([k,v])=>`<option value="${k}" ${catSel===k?'selected':''}>${v.label}</option>`).join('')+`<option value="other" ${catSel==='other'?'selected':''}>อื่นๆ</option>`;
+  const otherVal=isOther?ev.cat:'';
+  return `<div class="form-group"><label class="form-label">✏️ ชื่อนัดหมาย *</label><input class="form-input" id="f-title" placeholder="เช่น ประชุมทีม..." value="${ev.title||''}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">📅 วันที่</label><input class="form-input" id="f-date" type="date" value="${ev.date||''}"></div>
+      <div class="form-group"><label class="form-label">🏷️ หมวดหมู่</label><select class="form-input" id="f-cat" onchange="toggleOtherCat(this.value)" style="cursor:pointer;">${catDrop}</select></div>
+    </div>
+    <div class="form-group" id="other-cat-group" style="display:${catSel==='other'?'block':'none'};"><label class="form-label">📝 ระบุหมวดหมู่</label><input class="form-input" id="f-cat-other" placeholder="เช่น สัมมนา..." value="${otherVal}"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">🕐 เวลาเริ่ม</label><div style="display:flex;gap:6px;align-items:center;"><select class="form-input" id="f-time-h" style="flex:1;cursor:pointer;">${buildHours(ev.time)}</select><span style="font-weight:800;color:var(--text2);">:</span><select class="form-input" id="f-time-m" style="flex:1;cursor:pointer;">${buildMins(ev.time)}</select></div></div>
+      <div class="form-group"><label class="form-label">🕐 เวลาสิ้นสุด</label><div style="display:flex;gap:6px;align-items:center;"><select class="form-input" id="f-timeEnd-h" style="flex:1;cursor:pointer;">${buildHours(ev.timeEnd)}</select><span style="font-weight:800;color:var(--text2);">:</span><select class="form-input" id="f-timeEnd-m" style="flex:1;cursor:pointer;">${buildMins(ev.timeEnd)}</select></div></div>
+    </div>
+    <div class="form-group"><label class="form-label">👥 นัดกับใคร</label><input class="form-input" id="f-who" placeholder="ชื่อบุคคล, ทีม..." value="${ev.who||''}"></div>
+    <div class="form-group"><label class="form-label">📍 สถานที่</label><input class="form-input" id="f-loc" placeholder="เช่น ห้อง A201..." value="${ev.loc||''}"></div>
+    <div class="form-group"><label class="form-label">🗺️ Google Maps</label><input class="form-input" id="f-map" placeholder="https://maps.google.com/?q=..." value="${ev.mapUrl||''}"></div>
+    <div class="form-group"><label class="form-label">📝 บันทึก</label><textarea class="form-input" id="f-note" rows="2" placeholder="รายละเอียด...">${ev.note||''}</textarea></div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeModal()">ยกเลิก</button><button class="btn-save" onclick="saveEvent()">💾 บันทึก</button></div>`;
+}
+function toggleOtherCat(val){document.getElementById('other-cat-group').style.display=val==='other'?'block':'none';}
+async function saveEvent(){
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){showToast('กรุณาใส่ชื่อนัดหมาย','⚠️');return;}
+  if(!isGCalTokenValid()){showToast('กรุณาเชื่อม Google Calendar ก่อน 🗓️','⚠️');handleGCalConnect();return;}
+  const catVal=document.getElementById('f-cat').value;
+  const catFinal=catVal==='other'?(document.getElementById('f-cat-other').value.trim()||'other'):catVal;
+  const tsh=document.getElementById('f-time-h').value,tsm=document.getElementById('f-time-m').value;
+  const timeStart=(tsh&&tsm)?tsh+':'+tsm:'';
+  const teh=document.getElementById('f-timeEnd-h').value,tem=document.getElementById('f-timeEnd-m').value;
+  const timeEnd=(teh&&tem)?teh+':'+tem:'';
+  const ev={id:editId||Date.now().toString(),title,date:document.getElementById('f-date').value,time:timeStart,timeEnd,cat:catFinal,who:document.getElementById('f-who').value,loc:document.getElementById('f-loc').value,mapUrl:document.getElementById('f-map').value,note:document.getElementById('f-note').value,done:false};
+  
+  closeModal();
+  showToast(editId?'กำลังแก้ไข...':'กำลังเพิ่มนัด... 🚀','','add');
+  
+  if(editId){
+    // แก้ไขใน GCal: ลบอันเก่า + เพิ่มอันใหม่ (PATCH ไม่รองรับ implicit flow)
+    const oldEv = gcalEvents.find(e=>e.id==='gcal_'+editId) || events.find(e=>e.id===editId);
+    if(oldEv && oldEv.fromGCal) await deleteEventFromGCal(editId);
+    const gcalId = await addEventToGCal(ev);
+    addActivity('edit',title,ev.date+(ev.time?' '+ev.time:''));
+    showToast(gcalId?'แก้ไขใน Google Calendar แล้ว ✨':'แก้ไขแล้ว ✨','',gcalId?'add':'default');
+  } else {
+    const gcalId = await addEventToGCal(ev);
+    addActivity('add',title,ev.date+(ev.time?' '+ev.time:''));
+    showToast(gcalId?'เพิ่มใน Google Calendar แล้ว 🎉':'บันทึกแล้ว 🐭','','add');
+  }
+  setView(curView);renderSummary();checkNotifications();
+  if(!editId){
+    const d=ev.date.replace(/-/g,'');
+    const tS=timeStart?timeStart.replace(':','')+'00':'000000';
+    const tE=timeEnd?timeEnd.replace(':','')+'00':tS;
+    // รวม location + mapUrl ใน field เดียว → Google Calendar จะแสดง map pin อัตโนมัติ
+    const locStr=ev.mapUrl?(ev.loc?ev.loc+' '+ev.mapUrl:ev.mapUrl):(ev.loc||'');
+    let det=[];
+    if(ev.who)det.push('👥 '+ev.who);
+    if(ev.note)det.push('📝 '+ev.note);
+    if (isGCalTokenValid()) {
+      // เพิ่มนัดเข้า Google Calendar โดยตรง (ไม่ต้องเปิด popup)
+      addEventToGCal(ev).then(gcalId => {
+        if (gcalId) showToast('เพิ่มใน Google Calendar แล้ว 🗓️','','add');
+      });
+    }
+  }
+}
+async function markDone(id){
+  // หา event จาก gcalEvents หรือ events
+  const ev = gcalEvents.find(e=>e.id==='gcal_'+id || e.id===id) || events.find(e=>e.id===id);
+  const title = ev ? ev.title : id;
+  // ลบจาก GCal แล้วเพิ่มใหม่พร้อม [✅] prefix (GCal ไม่มี done state native)
+  if(ev && ev.fromGCal){
+    const realId = id.replace('gcal_','');
+    await deleteEventFromGCal(realId);
+    await addEventToGCal({...ev, title:'✅ '+title, id:Date.now().toString(), fromGCal:false});
+  }
+  addActivity('done',title,'');
+  closeModal();setView(curView);renderSummary();checkNotifications();
+  showToast('เสร็จแล้ว! 🎉','','done');
+}
+async function deleteEvent(id){
+  if(!confirm('ลบนัดหมายนี้?'))return;
+  const ev = gcalEvents.find(e=>e.id==='gcal_'+id||e.id===id) || events.find(e=>e.id===id);
+  const title = ev ? ev.title : '';
+  // ลบจาก GCal
+  const realId = id.startsWith('gcal_') ? id.replace('gcal_','') : id;
+  if(isGCalTokenValid()) await deleteEventFromGCal(realId);
+  // ลบออกจาก local cache ด้วย (ให้ UI อัพเดททันที)
+  gcalEvents = gcalEvents.filter(e=>e.id!=='gcal_'+realId && e.id!==id);
+  events = events.filter(e=>e.id!==id);
+  addActivity('delete',title,'');
+  closeModal();setView(curView);renderSummary();checkNotifications();
+  showToast('ลบแล้ว 🗑️','','delete');
+}
+function closeModal(){document.getElementById('modal').style.display='none';editId=null;}
+function closeModalOutside(e){if(e.target===document.getElementById('modal'))closeModal();}
+function connectGCal(){window.open('https://calendar.google.com','_blank');showToast('เปิด Google Calendar แล้ว! 🗓️','','add');}
+
+// ============================================================
+// ===== GOOGLE CALENDAR OAUTH + REAL-TIME SYNC =====
+// ============================================================
+
+// ── CONFIGURATION ──────────────────────────────────────────
+// ใส่ Client ID จาก Google Cloud Console (OAuth 2.0 Web App)
+// Redirect URI: ต้องตรงกับที่ตั้งใน Console
+// Client ID โหลดจาก localStorage (ตั้งได้ผ่านหน้าเว็บ ไม่ต้อง hard-code)
+// GitHub Pages URL คือ Redirect URI → ใส่ใน Google Console ครั้งเดียว
+let GCAL_CLIENT_ID = localStorage.getItem('gcal_client_id_saved') || '';
+// Scope: read + write calendar (เพิ่มนัดผ่านเว็บได้เลย)
+const GCAL_SCOPES = 'https://www.googleapis.com/auth/calendar';
+
+// ── STATE ──────────────────────────────────────────────────
+let gcalToken = localStorage.getItem('gcal_token') || null;
+let gcalTokenExpiry = parseInt(localStorage.getItem('gcal_token_expiry') || '0');
+let gcalSyncInterval = null;
+let gcalUserEmail = localStorage.getItem('gcal_user_email') || '';
+let gcalUserName = localStorage.getItem('gcal_user_name') || '';
+
+// ── SPACE EMOJI MAP (วันหยุดสำคัญ) — ครบทุกประเภท ─────────
+const HOLIDAY_SPACE_EMOJI = [
+  // วันหยุดราชการไทย
+  {keys:['วันขึ้นปีใหม่','new year\'s day','new year'],        emoji:'🎆'},
+  {keys:['วันจักรี','chakri','พระบาทสมเด็จ','รัชกาล'],         emoji:'👑'},
+  {keys:['วันสงกรานต์','songkran','สงกรานต์'],                emoji:'💫'},
+  {keys:['วันแรงงาน','labour day','labor day','วันแรงงานแห่งชาติ'],  emoji:'🌟'},
+  {keys:['วันฉัตรมงคล','coronation','พิธีฉัตรมงคล'],           emoji:'🌠'},
+  {keys:['วันวิสาขบูชา','วิสาขบูชา','visakha','vesak','visak'], emoji:'✨'},
+  {keys:['วันอาสาฬหบูชา','อาสาฬหบูชา','asalha'],               emoji:'🌕'},
+  {keys:['วันเข้าพรรษา','เข้าพรรษา','khao phansa','lent'],     emoji:'🌙'},
+  {keys:['วันแม่แห่งชาติ','วันแม่','mother\'s day','mother'],   emoji:'🌸'},
+  {keys:['วันพ่อแห่งชาติ','วันพ่อ','father\'s day','father'],   emoji:'⭐'},
+  {keys:['วันรัฐธรรมนูญ','constitution day','constitution'],    emoji:'🚀'},
+  {keys:['วันสิ้นปี','วันที่ 31 ธันวาคม','new year\'s eve'],    emoji:'🎇'},
+  {keys:['วันปิยมหาราช','chulalongkorn','ปิยมหาราช'],           emoji:'👑'},
+  {keys:['วันพระราชสมภพ','birthday of','เฉลิมพระชนมพรรษา'],    emoji:'🌠'},
+  {keys:['วันชาติ','national day','independence day'],          emoji:'🎑'},
+  {keys:['วันมาฆบูชา','มาฆบูชา','makha bucha'],                emoji:'🌕'},
+  {keys:['ออกพรรษา','ออกพรรษา','ok phansa'],                   emoji:'🌕'},
+  // International
+  {keys:['christmas','คริสต์มาส','xmas'],                      emoji:'☄️'},
+  {keys:['halloween'],                                          emoji:'🌑'},
+  {keys:['valentine'],                                          emoji:'🌌'},
+  {keys:['easter','อีสเตอร์'],                                  emoji:'🌟'},
+  {keys:['eid','อีด','รายา'],                                   emoji:'🌙'},
+  {keys:['chinese new year','ตรุษจีน','ตรุษ'],                  emoji:'🎆'},
+  {keys:['loy krathong','ลอยกระทง'],                           emoji:'🌕'},
+  // วันพิเศษทั่วไป
+  {keys:['birthday','วันเกิด'],                                 emoji:'🌟'},
+  {keys:['anniversary','ครบรอบ'],                               emoji:'💫'},
+  {keys:['exam','สอบ','examination','final'],                   emoji:'🔭'},
+  {keys:['graduation','จบการศึกษา','พิธีรับปริญญา'],             emoji:'🚀'},
+  {keys:['meeting','ประชุม'],                                   emoji:'🛰️'},
+  // วันหยุดทั่วไป
+  {keys:['วันหยุด','holiday','public holiday','หยุดนักขัตฤกษ์','bank holiday'], emoji:'🛸'},
+  {keys:['substitute','ชดเชย','หยุดชดเชย'],                    emoji:'🛸'},
+];
+
+function getSpaceEmoji(title, calendarName, calId) {
+  const txt = (title + ' ' + (calendarName||'')).toLowerCase();
+  for (const {keys, emoji} of HOLIDAY_SPACE_EMOJI) {
+    if (keys.some(k => txt.includes(k.toLowerCase()))) return emoji;
+  }
+  // ถ้าเป็น calendar ชื่อ "Holidays" หรือ "วันหยุด" แบบทั่วไป หรือ Google holiday calendar id
+  if (/holiday|หยุด|public|th\.thai|th#holiday/i.test((calendarName||'')+(calId||''))) return '🛸';
+  return null;
+}
+
+// ── OAUTH HELPERS ──────────────────────────────────────────
+function isGCalTokenValid() {
+  return gcalToken && Date.now() < gcalTokenExpiry - 60000;
+}
+
+function handleGCalConnect() {
+  if (!GCAL_CLIENT_ID) {
+    showGCalSetupDialog();
+    return;
+  }
+  if (isGCalTokenValid()) {
+    // ถ้า connect แล้ว → แสดง account info + option สลับ account
+    showGCalAccountMenu();
+    return;
+  }
+  startGCalOAuth();
+}
+
+function startGCalOAuth(hint) {
+  // hint = email ที่ต้องการ login (login_hint) เพื่อ account switcher
+  const redirectUri = window.location.href.split('?')[0].split('#')[0];
+  let authUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
+    + '?client_id=' + encodeURIComponent(GCAL_CLIENT_ID)
+    + '&redirect_uri=' + encodeURIComponent(redirectUri)
+    + '&response_type=token'
+    + '&scope=' + encodeURIComponent(GCAL_SCOPES)
+    + '&prompt=select_account consent'  // บังคับให้เลือก account ทุกครั้ง
+    + '&access_type=online';
+  if (hint) authUrl += '&login_hint=' + encodeURIComponent(hint);
+
+  const popup = window.open(authUrl, 'gcal_auth', 'width=520,height=640,scrollbars=yes,resizable=yes');
+  if (!popup) {
+    // popup blocked → redirect ตัวเอง (mobile)
+    sessionStorage.setItem('gcal_redirect_pending', '1');
+    window.location.href = authUrl;
+    return;
+  }
+  
+  const timer = setInterval(() => {
+    try {
+      if (!popup || popup.closed) { clearInterval(timer); return; }
+      const hash = popup.location.hash;
+      if (hash && hash.includes('access_token')) {
+        clearInterval(timer);
+        popup.close();
+        handleGCalToken(new URLSearchParams(hash.substring(1)));
+      }
+    } catch(e) { /* cross-origin — ยังโหลดอยู่ */ }
+  }, 500);
+}
+
+async function handleGCalToken(params) {
+  gcalToken = params.get('access_token');
+  const expiresIn = parseInt(params.get('expires_in') || '3600');
+  gcalTokenExpiry = Date.now() + expiresIn * 1000;
+  localStorage.setItem('gcal_token', gcalToken);
+  localStorage.setItem('gcal_token_expiry', gcalTokenExpiry.toString());
+  
+  // ดึงข้อมูล user email
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v2/userinfo',
+      { headers: { Authorization: 'Bearer ' + gcalToken } });
+    const u = await r.json();
+    gcalUserEmail = u.email || '';
+    gcalUserName = u.name || '';
+    localStorage.setItem('gcal_user_email', gcalUserEmail);
+    localStorage.setItem('gcal_user_name', gcalUserName);
+  } catch(e) {}
+  
+  setGCalStatus('connected');
+  fetchAllGCalEvents();
+  startGCalAutoSync();
+  showToast('เชื่อม ' + (gcalUserEmail||'Google Calendar') + ' สำเร็จ! 🎉','','add');
+}
+
+function showGCalAccountMenu() {
+  // แสดง menu: email ที่ใช้อยู่ + ปุ่มสลับ account + disconnect
+  const existing = document.getElementById('gcal-account-menu');
+  if (existing) { existing.remove(); return; }
+  const menu = document.createElement('div');
+  menu.id = 'gcal-account-menu';
+  menu.style.cssText = 'position:fixed;top:70px;right:24px;z-index:9999;background:rgba(13,27,62,0.99);border:2px solid rgba(77,201,194,0.4);border-radius:16px;padding:16px;min-width:280px;box-shadow:0 12px 40px rgba(0,10,40,0.7);';
+  menu.innerHTML = `
+    <div style="font-size:13px;font-weight:800;color:#4DC9C2;margin-bottom:10px;">🗓️ Google Calendar</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px;background:rgba(77,201,194,0.08);border-radius:10px;margin-bottom:12px;">
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#4DC9C2,#2BA8A0);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#0D1B3E;">${(gcalUserName||gcalUserEmail||'G').charAt(0).toUpperCase()}</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#FFF;">${gcalUserName||'Google User'}</div>
+        <div style="font-size:11px;color:#8AA8CC;">${gcalUserEmail||'ไม่ทราบ email'}</div>
+      </div>
+    </div>
+    <button onclick="document.getElementById('gcal-account-menu').remove();startGCalOAuth();" style="width:100%;font-family:var(--font);font-size:13px;font-weight:700;padding:9px;border-radius:10px;border:2px solid rgba(77,201,194,0.3);background:rgba(77,201,194,0.1);color:#4DC9C2;cursor:pointer;margin-bottom:6px;">🔄 สลับ Account</button>
+    <button onclick="fetchAllGCalEvents();document.getElementById('gcal-account-menu').remove();showToast('Syncing...','','add');" style="width:100%;font-family:var(--font);font-size:13px;font-weight:700;padding:9px;border-radius:10px;border:2px solid rgba(77,201,194,0.3);background:rgba(77,201,194,0.1);color:#4DC9C2;cursor:pointer;margin-bottom:6px;">↻ Sync ตอนนี้</button>
+    <button onclick="gcalDisconnect();" style="width:100%;font-family:var(--font);font-size:13px;font-weight:700;padding:9px;border-radius:10px;border:2px solid rgba(255,80,80,0.3);background:rgba(255,80,80,0.08);color:#FF8080;cursor:pointer;">🔌 Disconnect</button>
+  `;
+  document.body.appendChild(menu);
+  setTimeout(() => document.addEventListener('click', function h(e){
+    if(!menu.contains(e.target)){menu.remove();document.removeEventListener('click',h);}
+  }), 100);
+}
+
+function gcalDisconnect() {
+  gcalToken = null; gcalTokenExpiry = 0; gcalUserEmail = ''; gcalUserName = '';
+  ['gcal_token','gcal_token_expiry','gcal_user_email','gcal_user_name','gcal_events'].forEach(k=>localStorage.removeItem(k));
+  gcalEvents = [];
+  if(gcalSyncInterval){clearInterval(gcalSyncInterval);gcalSyncInterval=null;}
+  setGCalStatus('idle');
+  setView(curView);
+  renderHolidayBanner();
+  updateNotifBadge();
+  document.getElementById('gcal-account-menu')?.remove();
+  showToast('Disconnected จาก Google Calendar','','delete');
+}
+
+// ── SETUP DIALOG (กรณียังไม่ใส่ Client ID) ────────────────
+function showGCalSetupDialog() {
+  const thisPageUrl = window.location.href.split('?')[0].split('#')[0];
+  const overlay = document.createElement('div');
+  overlay.id = 'gcal-setup-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(5,14,36,0.85);backdrop-filter:blur(6px);z-index:9900;display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML = `
+    <div style="background:rgba(13,27,62,0.99);border:2px solid rgba(77,201,194,0.4);border-radius:24px;padding:28px;width:min(560px,95vw);max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,10,40,0.7);">
+      <div style="font-size:18px;font-weight:800;color:#4DC9C2;margin-bottom:4px;">🚀 ตั้งค่า Google Calendar</div>
+      <div style="font-size:11px;color:#8AA8CC;margin-bottom:16px;">ทำครั้งเดียว — ใช้ได้ทุกอุปกรณ์ตลอดไป</div>
+
+      <div style="background:rgba(255,200,80,0.08);border:1.5px solid rgba(255,200,80,0.25);border-radius:12px;padding:14px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:800;color:#FFE87A;margin-bottom:8px;">📋 วิธีตั้งค่า (ทำแค่ครั้งเดียว)</div>
+        <div style="font-size:12px;color:#C8D8F0;line-height:1.9;">
+          <b style="color:#4DC9C2;">Step 1.</b> ไปที่ 
+          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:#4DC9C2;font-weight:700;">Google Cloud Console → Credentials ↗</a><br>
+          <b style="color:#4DC9C2;">Step 2.</b> สร้าง <b>OAuth 2.0 Client ID</b> → เลือก <b>Web Application</b><br>
+          <b style="color:#4DC9C2;">Step 3.</b> ใน <b>Authorized redirect URIs</b> ใส่ URL นี้:<br>
+          <div style="background:rgba(13,27,62,0.8);border:1px solid rgba(77,201,194,0.3);border-radius:8px;padding:8px 12px;margin:6px 0;font-family:monospace;font-size:11px;color:#80FFD0;word-break:break-all;">${thisPageUrl}</div>
+          <b style="color:#4DC9C2;">Step 4.</b> ไปที่ <a href="https://console.cloud.google.com/apis/library/calendar-json.googleapis.com" target="_blank" style="color:#4DC9C2;font-weight:700;">API Library ↗</a> → เปิดใช้ <b>Google Calendar API</b><br>
+          <b style="color:#4DC9C2;">Step 5.</b> Copy <b>Client ID</b> แล้วใส่ด้านล่าง → กด เชื่อม
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:12px;font-weight:700;color:#8AA8CC;display:block;margin-bottom:5px;">Client ID (จาก Google Cloud Console)</label>
+        <input id="gcal-client-id-input" placeholder="xxxxxxx.apps.googleusercontent.com" 
+          style="width:100%;font-family:var(--font);font-size:13px;font-weight:600;padding:10px 12px;border:2px solid rgba(77,201,194,0.3);border-radius:10px;color:#FFF;background:rgba(20,40,80,0.6);outline:none;" 
+          value="${GCAL_CLIENT_ID}">
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+        <button onclick="document.getElementById('gcal-setup-overlay').remove()" 
+          style="font-family:var(--font);font-size:13px;font-weight:700;padding:9px 18px;border-radius:10px;border:2px solid rgba(77,201,194,0.2);background:rgba(20,40,80,0.5);color:#8AA8CC;cursor:pointer;">ยกเลิก</button>
+        <button onclick="saveGCalClientId()" 
+          style="font-family:var(--font);font-size:13px;font-weight:800;padding:9px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,#4DC9C2,#2BA8A0);color:#0D1B3E;cursor:pointer;">🔗 บันทึก &amp; เชื่อม Google</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+}
+
+function saveGCalClientId() {
+  const val = document.getElementById('gcal-client-id-input')?.value?.trim();
+  if (!val) { showToast('กรุณาใส่ Client ID','⚠️'); return; }
+  GCAL_CLIENT_ID = val;
+  localStorage.setItem('gcal_client_id_saved', val);
+  document.getElementById('gcal-setup-overlay')?.remove();
+  // เริ่ม OAuth ทันที ไม่ต้อง reload
+  showToast('บันทึกแล้ว! กำลังเปิด Google Login...','','add');
+  setTimeout(() => startGCalOAuth(), 400);
+}
+
+// ── STATUS INDICATOR ──────────────────────────────────────
+function setGCalStatus(state) {
+  const dot = document.getElementById('gcal-dot');
+  const txt = document.getElementById('gcal-status-text');
+  if (!dot||!txt) return;
+  if (state==='connected') {
+    dot.style.background='#4DC9C2';
+    const emailShort = gcalUserEmail ? (gcalUserEmail.length>16 ? gcalUserEmail.substring(0,14)+'…' : gcalUserEmail) : '';
+    txt.textContent = emailShort ? '✓ '+emailShort : 'GCal ✓';
+  }
+  else if (state==='syncing') { dot.style.background='#FFE87A'; txt.textContent='⟳ โหลด...'; }
+  else if (state==='error') { dot.style.background='#FF8080'; txt.textContent='GCal Error'; }
+  else { dot.style.background='#8AA8CC'; txt.textContent='เชื่อม GCal'; }
+}
+
+// ── SYNC UI HELPERS ──────────────────────────────────────
+let _syncToastTimer = null;
+
+function showSyncLoading(msg) {
+  const bar = document.getElementById('sync-bar');
+  const toast = document.getElementById('sync-toast');
+  const toastMsg = document.getElementById('sync-toast-msg');
+  if (bar) bar.classList.add('active');
+  if (toast && toastMsg) {
+    toastMsg.textContent = msg || 'กำลังโหลดปฏิทิน...';
+    toast.classList.add('show');
+  }
+  if (_syncToastTimer) clearTimeout(_syncToastTimer);
+}
+
+function hideSyncLoading(successMsg) {
+  const bar = document.getElementById('sync-bar');
+  const toast = document.getElementById('sync-toast');
+  const toastMsg = document.getElementById('sync-toast-msg');
+  if (bar) bar.classList.remove('active');
+  if (toast && toastMsg && successMsg) {
+    // เปลี่ยนเป็น success message แล้วค่อยหาย
+    toast.style.borderColor = 'rgba(128,255,208,0.5)';
+    toastMsg.textContent = successMsg;
+    // เปลี่ยน spinner เป็น checkmark
+    const spinner = toast.querySelector('.sync-spinner');
+    if (spinner) { spinner.style.animation='none'; spinner.textContent='✓'; spinner.style.color='#80FFD0'; spinner.style.border='none'; spinner.style.fontSize='14px'; }
+    _syncToastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+      toast.style.borderColor = '';
+      if (spinner) { spinner.textContent=''; spinner.style=''; spinner.className='sync-spinner'; }
+    }, 2000);
+  } else if (toast) {
+    toast.classList.remove('show');
+  }
+}
+
+// ── DYNAMIC RANGE: ดึง events ตามช่วงที่กำลังดูอยู่ ──────
+let _lastFetchedRange = '';  // cache ป้องกัน fetch ซ้ำ range เดิม
+
+function getViewRange() {
+  // คำนวณ timeMin/timeMax จาก curDate + curView
+  let start, end;
+  if (curView === 'month') {
+    start = new Date(curDate.getFullYear(), curDate.getMonth() - 1, 1);
+    end   = new Date(curDate.getFullYear(), curDate.getMonth() + 2, 0);
+  } else if (curView === 'week') {
+    start = new Date(curDate);
+    start.setDate(curDate.getDate() - curDate.getDay() - 7);
+    end = new Date(start);
+    end.setDate(start.getDate() + 21);
+  } else {
+    // day view: ±7 วัน
+    start = new Date(curDate);
+    start.setDate(curDate.getDate() - 7);
+    end = new Date(curDate);
+    end.setDate(curDate.getDate() + 7);
+  }
+  return { timeMin: start.toISOString(), timeMax: end.toISOString(),
+           key: start.toISOString().substring(0,7) + '_' + end.toISOString().substring(0,7) };
+}
+
+// ── ADD EVENT TO GOOGLE CALENDAR (API write) ─────────────
+async function addEventToGCal(ev) {
+  if (!isGCalTokenValid()) return null;
+  try {
+    const startDt = ev.time ? ev.date + 'T' + ev.time + ':00' : ev.date;
+    const endDt   = ev.timeEnd ? ev.date + 'T' + ev.timeEnd + ':00'
+                  : ev.time    ? ev.date + 'T' + (String(parseInt(ev.time)+1).padStart(2,'0')) + ev.time.substring(2) + ':00'
+                  : ev.date;
+    const isAllDay = !ev.time;
+    const body = {
+      summary: ev.title,
+      location: ev.mapUrl ? (ev.loc ? ev.loc + ' ' + ev.mapUrl : ev.mapUrl) : (ev.loc || ''),
+      description: [ev.who ? '👥 ' + ev.who : '', ev.note || ''].filter(Boolean).join('\n'),
+      start: isAllDay ? { date: startDt } : { dateTime: startDt, timeZone: 'Asia/Bangkok' },
+      end:   isAllDay ? { date: endDt }   : { dateTime: endDt,   timeZone: 'Asia/Bangkok' },
+    };
+    const r = await fetch(
+      'https://www.googleapis.com/calendar/v3/calendars/primary/events',
+      { method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + gcalToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body) }
+    );
+    const data = await r.json();
+    if (data.id) {
+      // รอ 2 วินาที แล้ว sync ใหม่ เพื่อให้ event ที่เพิ่งเพิ่มปรากฏ
+      setTimeout(() => fetchAllGCalEvents(), 2000);
+      return data.id;
+    }
+    return null;
+  } catch(e) { console.error('GCal write error:', e); return null; }
+}
+
+async function deleteEventFromGCal(gcalEventId) {
+  if (!isGCalTokenValid() || !gcalEventId) return;
+  try {
+    await fetch(
+      'https://www.googleapis.com/calendar/v3/calendars/primary/events/' + gcalEventId,
+      { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + gcalToken } }
+    );
+    setTimeout(() => fetchAllGCalEvents(), 1500);
+  } catch(e) {}
+}
+
+// ── FETCH ALL CALENDARS + EVENTS (dynamic range) ──────────
+let _calendarList = null; // cache calendar list
+
+async function fetchAllGCalEvents(forceRange) {
+  if (!isGCalTokenValid()) { setGCalStatus('idle'); return; }
+
+  // คำนวณ range จาก view ปัจจุบัน
+  const range = forceRange || getViewRange();
+  const rangeKey = range.key;
+
+  // ถ้า range เดิม และไม่ใช่ force → skip (ประหยัด quota)
+  if (!forceRange && rangeKey === _lastFetchedRange) return;
+  _lastFetchedRange = rangeKey;
+
+  setGCalStatus('syncing');
+
+  // แสดง loading UI
+  const now = new Date();
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const startD = new Date(range.timeMin);
+  const endD   = new Date(range.timeMax);
+  const rangeLabel = `${months[startD.getMonth()]} ${startD.getFullYear()+543} – ${months[endD.getMonth()]} ${endD.getFullYear()+543}`;
+  showSyncLoading(`กำลังโหลด ${rangeLabel}...`);
+
+  try {
+    // 1) ดึง calendar list (cache ไว้ ไม่ต้อง fetch ทุกครั้ง)
+    if (!_calendarList) {
+      const calListResp = await fetch(
+        'https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=250&showHidden=true',
+        { headers: { Authorization: 'Bearer ' + gcalToken } }
+      );
+      if (calListResp.status === 401) {
+        gcalToken=null; localStorage.removeItem('gcal_token');
+        setGCalStatus('idle'); hideSyncLoading(); return;
+      }
+      const calList = await calListResp.json();
+      _calendarList = calList.items || [];
+    }
+    const calendars = _calendarList;
+
+    // 2) ดึง events จากทุก calendar ตาม range ที่กำลังดูอยู่
+    const timeMin = range.timeMin;
+    const timeMax = range.timeMax;
+
+    const allFetches = calendars.map(cal =>
+      fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal.id)}/events`
+        + `?timeMin=${encodeURIComponent(timeMin)}`
+        + `&timeMax=${encodeURIComponent(timeMax)}`
+        + `&singleEvents=true&orderBy=startTime&maxResults=500`,
+        { headers: { Authorization: 'Bearer ' + gcalToken } }
+      ).then(r => r.json()).then(d => ({ cal, items: d.items||[] })).catch(()=>({ cal, items:[] }))
+    );
+
+    const results = await Promise.all(allFetches);
+
+    // 3) แปลงเป็น format ของ app
+    const newGcalEvents = [];
+    for (const { cal, items } of results) {
+      // ตรวจจับ holiday calendar: ชื่อ, id (Google's holiday cal id มี #holiday@)
+      const isHolidayCal = /holiday|หยุด|public|วันหยุดของไทย|th\.thai/i.test((cal.summary||'')+(cal.id||''))
+        || (cal.id||'').includes('#holiday@');
+      for (const item of items) {
+        if (item.status === 'cancelled') continue;
+        const dateStr = item.start?.date || item.start?.dateTime?.substring(0,10);
+        if (!dateStr) continue;
+        const timeStr = item.start?.dateTime ? item.start.dateTime.substring(11,16) : '';
+        const timeEndStr = item.end?.dateTime ? item.end.dateTime.substring(11,16) : '';
+        const spaceEmoji = getSpaceEmoji(item.summary||'', cal.summary||'', cal.id||'');
+        newGcalEvents.push({
+          id: 'gcal_' + item.id,
+          title: item.summary || '(ไม่มีชื่อ)',
+          date: dateStr,
+          time: timeStr,
+          timeEnd: timeEndStr,
+          loc: item.location || '',
+          note: item.description || '',
+          cat: isHolidayCal ? 'holiday' : 'gcal',
+          calName: cal.summary || '',
+          calColor: cal.backgroundColor || '#4DC9C2',
+          isHoliday: isHolidayCal || !!spaceEmoji,
+          spaceEmoji: spaceEmoji,
+          done: false,
+          fromGCal: true,
+        });
+      }
+    }
+
+    // 4) อัพเดท state — GCal เป็น source of truth
+    gcalEvents = newGcalEvents;
+    // แยกนัดส่วนตัว (ไม่ใช่ holiday/วันหยุด) ใส่ events array เพื่อให้ renderMonth ใช้ได้
+    events = gcalEvents
+      .filter(e => !e.isHoliday)
+      .map(e => ({...e, id: e.id.replace('gcal_',''), fromGCal:true}));
+    localStorage.setItem('gcal_events', JSON.stringify(gcalEvents));
+
+    // นับ upcoming GCal events เพื่อ badge
+    const upcoming = gcalEvents.filter(e => {
+      if (!e.time && !e.date) return false;
+      const evDt = e.time ? new Date(e.date+'T'+e.time) : new Date(e.date+'T00:00:00');
+      const diff = (evDt - now) / 60000;
+      return diff > 0 && diff <= 120;
+    });
+    gcalUnreadCount = upcoming.length;
+
+    setGCalStatus('connected');
+    updateNotifBadge();
+    renderHolidayBanner();
+    setView(curView);
+    renderSummary();
+    if (document.getElementById('notif-panel').classList.contains('open')) renderNotifList();
+
+    // แสดง success
+    const evCount = gcalEvents.filter(e => !e.isHoliday).length;
+    const holCount = gcalEvents.filter(e => e.isHoliday).length;
+    hideSyncLoading(`โหลดแล้ว ✓  ${evCount} นัด · ${holCount} วันหยุด`);
+
+  } catch(e) {
+    console.error('GCal fetch error:', e);
+    setGCalStatus('error');
+    hideSyncLoading();
+    showToast('โหลดปฏิทินไม่สำเร็จ ลองใหม่อีกครั้ง','⚠️');
+  }
+}
+
+// ── AUTO SYNC ──────────────────────────────────────────────
+function startGCalAutoSync() {
+  if (gcalSyncInterval) clearInterval(gcalSyncInterval);
+  gcalSyncInterval = setInterval(() => {
+    if (isGCalTokenValid()) {
+      // force re-fetch range ที่กำลังดูอยู่ (ไม่ skip cache)
+      _lastFetchedRange = '';
+      fetchAllGCalEvents();
+    }
+  }, 30000); // ทุก 30 วินาที (dynamic range แล้วไม่ต้องถี่มาก)
+}
+
+// ── CHECK SAVED CLIENT ID ON LOAD ─────────────────────────
+(function initGCal() {
+  // ดักจับ token จาก redirect URL (mobile / popup-blocked fallback)
+  if (window.location.hash.includes('access_token')) {
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    if (params.get('access_token')) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      handleGCalToken(params).then(()=>{
+        startGCalAutoSync();
+      });
+      return;
+    }
+  }
+  // ถ้า token ยังใช้ได้ → เริ่ม sync ทันที
+  if (isGCalTokenValid()) {
+    setGCalStatus('connected');
+    fetchAllGCalEvents();
+    startGCalAutoSync();
+  } else if (gcalToken) {
+    gcalToken = null;
+    localStorage.removeItem('gcal_token');
+    setGCalStatus('idle');
+  }
+  // อัพเดท header แสดง email ที่ connect อยู่
+  if (gcalUserEmail) updateGCalStatusWithEmail();
+})();
+
+function updateGCalStatusWithEmail(){
+  const txt = document.getElementById('gcal-status-text');
+  if (txt && gcalUserEmail) {
+    const short = gcalUserEmail.length > 18 ? gcalUserEmail.substring(0,16)+'…' : gcalUserEmail;
+    txt.textContent = '✓ ' + short;
+  }
+}
+
+// Floating stars
+(function(){const emojis=['✦','✧','⋆','˚','·','✶','★'];const wrap=document.getElementById('float-stars');for(let i=0;i<18;i++){const s=document.createElement('div');s.className='float-star';s.textContent=emojis[i%emojis.length];const sz=Math.random()*12+8;s.style.cssText=`font-size:${sz}px;left:${Math.random()*100}vw;top:${Math.random()*100}vh;animation-duration:${4+Math.random()*6}s;animation-delay:${Math.random()*4}s;opacity:${.3+Math.random()*.4};color:${['#4DC9C2','#FFB8D8','#B8D8FF','#FFE87A','#80FFD8'][i%5]};`;wrap.appendChild(s);}})();
+
+// Mickey message rotation (no dragging — stays fixed)
+(function(){
+  const msgs=['อย่าลืมนัดนะ! 🌟','Mickey อยู่นี่~ 🐭','มีนัดไหมวันนี้? ✨','Have a great day! 🚀','ทำ Habit วันนี้แล้วมั้ย? 🌱'];
+  let idx=0;
+  setInterval(()=>{idx=(idx+1)%msgs.length;document.getElementById('mickey-msg').textContent=msgs[idx];},4000);
+})();
+
+// Init — Google Calendar only
+setView('month');renderSummary();checkNotifications();renderHabits();
+setInterval(checkNotifications, 30000); // real-time badge ทุก 30 วินาที
+setInterval(updateNotifBadge, 10000); // อัพเดท badge ทุก 10 วินาที (real-time countdown)
+
+// แสดง setup banner ถ้ายังไม่ได้เชื่อม GCal
+(function(){
+  const banner = document.getElementById('setup-banner');
+  if (banner && !isGCalTokenValid() && !GCAL_CLIENT_ID) {
+    // แสดงหลัง 1 วินาที ไม่รบกวน UX ทันที
+    setTimeout(() => { banner.style.display='flex'; }, 1000);
+  }
+})();
+
+// sync ทันทีเมื่อกลับมาที่ tab/เปิดหน้าจอ
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState==='visible'){
+    if(isGCalTokenValid()) fetchAllGCalEvents();
+  }
+});
+// sync เมื่อกลับมาที่ window (สลับ app บนมือถือ)
+window.addEventListener('focus', ()=>{
+  if(isGCalTokenValid()) fetchAllGCalEvents();
+});
+</script>
+</body>
+</html>
